@@ -1,42 +1,30 @@
 import axios from "axios";
-import React, { useEffect, useState,useContext} from "react";
+import React, { useEffect, useState,useContext, useId} from "react";
 import Card from "./Card";
 import { UserDetailsContext } from "../Context/UserContext";
-function PostCard() {
-  const [post, setPost] = useState([]);
-  const [like, setLike] = useState(false);
-  const {userId} =useContext(UserDetailsContext)
-  console.log(post);
-  useEffect(()=>{
-    
-  })
-  useEffect(() => {
-    axios.get("http://localhost:8800/api/users/getposts").then((data) => {
-      
-      setPost(data.data.posts);
-    });
-  }, []);
+import Like from "./Like";
+import LikeImage from './LikeImage'
 
+
+function PostCard({post}) {
+  const {userId} =useContext(UserDetailsContext)
+  const [isliked, setIsLiked] = useState(post.like.includes(userId));
+  const [like, setLike] = useState(null);
+  useEffect(()=>{
+    setLike(post.like.length)
+  },[])
   const likeHandler = (postId) => {
     axios.put(`http://localhost:8800/api/users/like/${userId}/unlike`,{postId:postId})
     .then((data)=>{
-
-      if(data.data.liked){
-
-        console.log("like");
-      }else{
-        console.log("unliked");
-      }
+     const likeCount= data.data.count
+     setLike(likeCount)
+     setIsLiked(!isliked)
     })
-    console.log(userId);
-    
-
   };
+
 
   return (
     <div>
-      {post.map((elem) => {
-        return (
           <Card>
             <div className="flex gap-6">
               <div className="w-12 rounded-full overflow-hidden">
@@ -51,32 +39,34 @@ function PostCard() {
               </div>
             </div>
             <div className="w-full h-full bg-white-300 mb-5 mt-5">
-              {elem.imageUrl && (
+              <div className="mt-2">{post.description}</div>
+              {post.imageUrl && (
                 <img
                   className="w-full h-full rounded"
-                  src={elem.imageUrl}
+                  src={post.imageUrl}
                   alt="img"
                 />
               )}
-              <div className="mt-2">{elem.description}</div>
             </div>
+            <Like Like={like} />
             <div>
               <hr />
             </div>
 
             <div className="grid grid-cols-20 cursor-pointer">
               <div onClick={()=>{
-                likeHandler(elem._id)
-                console.log(elem.like.length);
-              } } className="col-span-4 ">
-                like
-                {elem.like.length}
+                likeHandler(post._id)
+               
+              } } className="col-span-4 mt-2 w-5 h-5 ">
+
+              <LikeImage isliked={isliked} />
               </div>
-              <div>comment</div>
+              <div>
+                  comment
+   </div>
             </div>
           </Card>
-        );
-      })}
+      
     </div>
   );
 }

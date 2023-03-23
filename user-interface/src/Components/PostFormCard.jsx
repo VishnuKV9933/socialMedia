@@ -1,18 +1,14 @@
 /* eslint-disable no-restricted-globals */
-import React, { useState,useRef ,useEffect } from "react";
+import React, { useState,useRef  } from "react";
 import Card from "./Card";
 import { FcPhotoReel } from "react-icons/fc";
 import { HiOutlineTrash } from "react-icons/hi2";
 import axios from "axios";
 import { useCookies } from "react-cookie";
+import ShareButton from "./SharaButton";
 
-function PostFormCard() {
-  const [reload,setreload]=useState(false)
-useEffect(()=>{
+function PostFormCard({posts,setPost}) {
 
-  console.log(reload);
-},[reload])
-  
   const [description, setDescription] = useState("");
   const [file, setfile] = useState(null);
   const textareaRef = useRef(null);
@@ -24,19 +20,11 @@ useEffect(()=>{
     adjustTextareaHeight();
   } 
 
-
-
   function adjustTextareaHeight() {
     if (textareaRef.current) {
        textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }}
-
-
-
-
-
-
 
   const submit = (e) => {
     e.preventDefault();
@@ -55,23 +43,16 @@ useEffect(()=>{
     }else{
       return
     }
-    
-   
-   
-    //  Array.from(file).forEach(image => {
-    //   data.append("image", image);
-    // });
 
-  
- 
     axios
       .post("http://localhost:8800/api/users/userpost", data, {
         headers: { ContentType: "multipart/form-data", jwt: jwt },
       })
       .then((data) => {
-        console.log("data arrived");
-        setreload(!reload)
-        location.reload()
+       console.log(data);
+       setPost([data.data, ...posts])
+       setDescription(null)
+       setfile(null)
       })
       .catch((e) => {
         console.log(e);
@@ -101,7 +82,6 @@ useEffect(()=>{
       placeholder="Type something..."  />
 
 
-
         <div id="photo&share" className="flex w-1/4 gap-2">
           
           <label className="flex justify-center h-10 items-center rounded-xl w-1/2 bg-indigo-200 hover:bg-indigo-500 border-solid">
@@ -119,13 +99,13 @@ useEffect(()=>{
             </div>
           </label>
 
-
-          <button
+<ShareButton/>
+          {/* <button
             type="submit"
             id="share"
-            className="flex justify-center h-10 items-center rounded-xl w-1/2 bg-indigo-200 hover:bg-indigo-500 border-solid">
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
             share
-          </button>
+          </button> */}
 
         </div>
       </form>

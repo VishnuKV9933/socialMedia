@@ -8,16 +8,37 @@ import PostCard from "../Components/PostCard";
 import { UserDetailsContext } from "../Context/UserContext";
 
 function Home() {
+  // const CancelToken =axios.CancelToken;
+  // const source1=CancelToken.source();
   const [posts, setPost] = useState([]);
   const {setUserId} =useContext(UserDetailsContext)
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
-  useEffect(() => {
-    axios.get("http://localhost:8800/api/users/getposts").then((data) => {
+  
+  const postAlert=()=>{
+    axios.get("http://localhost:8800/api/users/getposts",
+    
+    ).then((data) => {
       
       setPost(data.data.posts);
+
     });
+  }
+  useEffect(() => {
+    axios.get("http://localhost:8800/api/users/getposts",
+    // {cancelToken: source1.token}
+    ).then((data) => {
+      
+      setPost(data.data.posts);
+
+    });
+ 
   }, []);
+
+  useEffect(()=>{
+
+  })
+
   useEffect(() => {
     const verifyUser = async () => {
       if (!cookies.jwt) {
@@ -66,7 +87,7 @@ function Home() {
       sm:col-span-12
       col-span-12">
 
-<PostFormCard posts={posts} setPost={setPost}/>
+<PostFormCard posts={posts} setPost={setPost} postAlert={postAlert}/>
 {posts.map((post) => {
         return (
       <PostCard post={post} />

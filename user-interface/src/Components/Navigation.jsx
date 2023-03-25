@@ -9,13 +9,12 @@ function Navigation() {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const logout =() => {
-    console.log("33333333333333333");
     removeCookie("jwt");
-    navigate("/userLogin");
+    navigate("/userLogin");                                                         
   };
   return (
  
-    <div className='w-full  rounded-3xl mb-2 flex-row items-center bg-white shadow-lg shadow-gray-200   p-4'>
+    <div className='w-full  rounded-3xl mb-2 flex-row items-center bg-gradient-to-b from-pink-600  to-blue-700 hover:from-blue-700 hover:to-pink-600 shadow-lg shadow-gray-200   p-4'>
         <h2>Navigation</h2>
           <a  href="/" className="flex items-center gap-2 py-3">
             <RiHomeLine className="  w-8 h-8" />

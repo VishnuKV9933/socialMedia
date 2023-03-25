@@ -7,7 +7,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import ShareButton from "./SharaButton";
 
-function PostFormCard({posts,setPost}) {
+function PostFormCard({posts,setPost,postAlert}) {
 
   const [description, setDescription] = useState("");
   const [file, setfile] = useState(null);
@@ -49,10 +49,13 @@ function PostFormCard({posts,setPost}) {
         headers: { ContentType: "multipart/form-data", jwt: jwt },
       })
       .then((data) => {
-       console.log(data);
+     
        setPost([data.data, ...posts])
+       console.log("posts");
+       console.log(posts);
        setDescription(null)
        setfile(null)
+       postAlert()
       })
       .catch((e) => {
         console.log(e);
@@ -61,7 +64,7 @@ function PostFormCard({posts,setPost}) {
 
   return (
     <Card>
-      <form onSubmit={submit} className="flex gap-6">
+      <form onSubmit={submit} className="flex gap-6 ">
         <div>
           <div className="w-12 rounded-full overflow-hidden">
             <img

@@ -3,7 +3,7 @@ dotenv.config();
 const crypto = require("crypto");
 const sharp = require("sharp");
 const jwt_decode = require("jwt-decode");
-// const UserModel =require('../Models/UserModel')
+const UserModel =require('../Models/UserModel')
 const PostModel = require("../Models/postModel");
 // const mongoose = require('mongoose');
 const { CreateImgUrl } = require("../otherFiles/s3");
@@ -127,12 +127,14 @@ const likeUnlike = async (req, res) => {
       await post.updateOne({ $push: { like: req.params.id } });
       const post2 = await PostModel.findById(req.body.postId);
       const likeCount = post2.like.length;
+      console.log("likeCount:",likeCount);
       res.status(200).json({ liked: true, count: likeCount });
     } else {
       console.log("unliked");
       await post.updateOne({ $pull: { like: req.params.id } });
       const post2 = await PostModel.findById(req.body.postId);
       const likeCount = post2.like.length;
+      console.log("likeCount:",likeCount);
       res.status(200).json({ liked: false, count: likeCount });
     }
   } catch (err) {
@@ -140,9 +142,18 @@ const likeUnlike = async (req, res) => {
     res.json({ error: err });
   }
 };
+ 
+const getuser =async(req,res)=>{
+  console.log(req.body);
+  const post = await UserModel.findById(req.body.userId);
+  console.log(post);
+  res.json(post)
+
+}
 
 module.exports = {
   userPostS3Upload,
   getPosts,
   likeUnlike,
+  getuser
 };

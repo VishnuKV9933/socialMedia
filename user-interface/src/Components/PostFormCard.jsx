@@ -1,13 +1,13 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState,useRef  } from "react";
-import Card from "./Card";
+import Card2 from "./Card2";
 import { FcPhotoReel } from "react-icons/fc";
 import { HiOutlineTrash } from "react-icons/hi2";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import ShareButton from "./SharaButton";
 
-function PostFormCard({posts,setPost,postAlert}) {
+function PostFormCard2({posts,setPost,postAlert}) {
 
   const [description, setDescription] = useState("");
   const [file, setfile] = useState(null);
@@ -63,7 +63,8 @@ function PostFormCard({posts,setPost,postAlert}) {
   };
 
   return (
-    <Card>
+    
+    <Card2 >
       <form onSubmit={submit} className="flex gap-6 ">
         <div>
           <div className="w-12 rounded-full overflow-hidden">
@@ -126,8 +127,8 @@ function PostFormCard({posts,setPost,postAlert}) {
           />
         </div>
       )}
-    </Card>
+    </Card2>
   );
 }
 
-export default PostFormCard;
+export default PostFormCard2;

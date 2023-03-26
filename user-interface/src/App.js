@@ -8,6 +8,7 @@ import Home from './UserPages/Home'
 import Text from './Text';
 import "react-toastify/dist/ReactToastify.css" 
 import AdminHomePage from './AdminPages/AdminHomePage';
+import UserOtpLogin from './UserPages/UserOtpLogin';
 
 function App() {
     
@@ -18,6 +19,7 @@ function App() {
    <Route exact path="/orm" element={<Orm/>} />
     <Route exact path="/usersignup" element={<UserSignup/>} />
     <Route exact path="/userlogin" element={<UserLogin/>} />
+    <Route exact path="/userotplogin" element={<UserOtpLogin/>} />
 
     <Route exact path="/adminlogin" element={<AdminPage/>} /> 
 

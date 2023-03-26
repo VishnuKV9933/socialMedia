@@ -1,7 +1,8 @@
 const router = require("express").Router();
 
 
- const {userSignUP,userLogin,AdminLogin} = require("../Controllers/AuthController");
+
+ const {userSignUP,userLogin,AdminLogin,Otplogin} = require("../Controllers/AuthController");
  const { checkuser ,checkAdmin} = require("../otherFiles/AuthMiddlewares");
  
 router.post("/",checkuser ,(req, res) => {
@@ -23,5 +24,7 @@ router.post("/usersignup",userSignUP);
 router.post("/userlogin",userLogin)
 
 router.post("/adminlogin",AdminLogin)
+
+router.post('/otplogin',Otplogin)
  
 module.exports = router;

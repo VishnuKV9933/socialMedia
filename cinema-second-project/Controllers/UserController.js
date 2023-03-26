@@ -48,9 +48,9 @@ const userPostS3Upload = async (req, res) => {
         console.log(data);
         res.send(data);
       });
-    } else {
+    } else { 
       const buffer = await sharp(req.file.buffer)
-        .rotate()
+        .rotate() 
         .resize({
           height: 600,
           width: 800,

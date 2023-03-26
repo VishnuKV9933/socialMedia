@@ -191,7 +191,8 @@ export default function UserSignup() {
               {errors.password && (
             <p style={{color:"red"}}>{errors.password.message}</p>
           )}
-              <div class="block">
+              {/* <div class="block">
+  
                 <span class="ml-3">Select your field</span>
     
                     <div class="mt-2">
@@ -238,7 +239,7 @@ export default function UserSignup() {
                 </div>
 
               </div>
-                 {errors.field && <p style={{color:"red"}}>{errors.field.message}</p>}
+                 {errors.field && <p style={{color:"red"}}>{errors.field.message}</p>} */}
               <button
                 class="mt-6 px-4 py-1.5 rounded-md shadow-lg bg-gradient-to-r from-pink-600 to-red-600 font-medium text-gray-100 block transition duration-300"
                 type="submit"

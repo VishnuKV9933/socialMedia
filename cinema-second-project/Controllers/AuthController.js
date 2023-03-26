@@ -175,8 +175,14 @@ console.log("adminlogin");
 
 }
 
+const Otplogin=(req,res)=>{
+console.log(req.body);
+res.json({data:true})
+}
+
 module.exports = {
   userSignUP,
   userLogin,
-  AdminLogin
+  AdminLogin,
+  Otplogin
 };

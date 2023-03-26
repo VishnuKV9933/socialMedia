@@ -13,30 +13,34 @@ function Navigation() {
     navigate("/userLogin");                                                         
   };
   return (
- 
-    <div className='w-full  rounded-3xl mb-2 flex-row items-center bg-gradient-to-b from-pink-600  to-blue-700 hover:from-blue-700 hover:to-pink-600 shadow-lg shadow-gray-200   p-4'>
+    // bg-gradient-to-b from-pink-100  to-blue-100 hover:from-blue-100 hover:to-pink-100
+    <div className='w-full  bg-gradient-to-b from-pink-200  to-blue-200 hover:from-blue-200 hover:to-pink-200 rounded-3xl mb-2 flex-row items-center  shadow-lg shadow-gray-200    p-4'>
         <h2>Navigation</h2>
-          <a  href="/" className="flex items-center gap-2 py-3">
+<div className='' >
+
+          <a  href="/" className=" flex items-center   hover:rounded-full hover:ml-6   gap-2 py-3">
             <RiHomeLine className="  w-8 h-8" />
             HOME
             </a>
-          <a  href="/" className="flex items-center gap-2 py-3">
+</div>
+
+          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <CgProfile className="w-8 h-8"/>
             PROFILE
             </a>
-          <a  href="/" className="flex items-center gap-2 py-3">
+          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <RiChatSmile3Line className="w-8 h-8"/>
             CHATS
             </a>
-          <a  href="/" className="flex items-center gap-2 py-3">
+          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <MdNotificationsNone className="w-8 h-8"/>
-            NOTIFICATION
+            NOTICE!
             </a>
-          <a  href="/" className="flex items-center gap-2 py-3">
+          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <CgMoreR className="w-8 h-8"/>
             MORE
             </a>
-          <button onClick={logout} className="flex items-center gap-2 py-3">
+          <button onClick={logout} className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <BiLogOutCircle className="w-8 h-8"/>
             LOGOUT
             </button>

@@ -55,7 +55,7 @@ console.log(data);
       <div className="flex items-center justify-center font-black m-3 mb-12">
         
 
-      <h1 className="tracking-wide text-3xl text-gray-900">Cinima app</h1>
+      <h1 className="tracking-wide text-3xl text-gray-900">NEW WORLD</h1>
       </div>
         <form  onSubmit={handleSubmit(onSubmit)}
 
@@ -103,7 +103,7 @@ console.log(data);
   )}
           <button className="mt-6 px-4 py-1.5 rounded-md shadow-lg bg-gradient-to-r from-pink-600 to-red-600 font-medium text-gray-100 block transition duration-300" type="submit">
            
-            <span id="login_default_state">Donate<span id="subtotal"></span></span>
+            <span id="login_default_state">Login<span id="subtotal"></span></span>
           </button>
         </form>
         <ToastContainer />

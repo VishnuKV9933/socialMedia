@@ -99,7 +99,7 @@ function Home() {
       >
         {/* --------------------------fixed------------------- */}
         <div
-          className=" absolute
+          className=" 
       xl:ml-0 width-full
       lg:col-span-12 ml-3
       md:col-span-12
@@ -110,7 +110,7 @@ function Home() {
         </div>
         {/* --------------------------fixed------------------- */}
 
-        <div className="mt-24 ">
+        <div className=" ">
           {posts.map((post) => {
             return <PostCard post={post} />;
           })}

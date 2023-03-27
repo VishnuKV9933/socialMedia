@@ -67,7 +67,7 @@ function PostFormCard2({posts,setPost,postAlert}) {
     <Card2 >
       <form onSubmit={submit} className="flex gap-6 ">
         <div>
-          <div className="w-12 rounded-full overflow-hidden">
+          <div className="md:hidden w-12 rounded-full overflow-hidden">
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6tYl-IikcR09ow-_H9yFcUpQgV7aWYTobF5-qERbl2yJmM458f_EBJy0&s"
               alt="img"

@@ -83,7 +83,7 @@ export default function UserSignup() {
         >
           <div class="p-6 bg-sky-50 rounded">
             <div class="flex items-center justify-center font-black m-3 mb-12">
-              <h1 class="tracking-wide text-3xl text-gray-900">Cinima app</h1>
+              <h1 class="tracking-wide text-3xl text-gray-900">NEW WORLD</h1>
             </div>
 
             <form
@@ -245,7 +245,7 @@ export default function UserSignup() {
                 type="submit"
               >
                 <span id="login_default_state">
-                  Submiit<span id="subtotal"></span>
+                Sign up<span id="subtotal"></span>
                 </span>
               </button>
             </form>

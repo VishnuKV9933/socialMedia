@@ -112,12 +112,10 @@ import React from 'react'
 function Orm() {
   return (
     <div>
-      <div class="fixed top-0 right-0 grid grid-cols-2 gap-4 p-4">
-  <div class="bg-blue-500 p-4">Column 1</div>
-  <div class="bg-red-500 p-4">Column 2</div>
-  <div class="bg-green-500 p-4 col-span-2">Full width</div>
-  <div class="bg-yellow-500 p-4">Column 1</div>
-  <div class="bg-purple-500 p-4">Column 2</div>
+<div className='grid grid-cols-20 fixed'>
+<div className='col-span-12 bg-pink-200 w-full h-48'>
+  firstdddd
+</div>
 </div>
     </div>
   )

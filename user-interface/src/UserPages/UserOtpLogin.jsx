@@ -1,10 +1,15 @@
 import React from 'react'
 import { ToastContainer,toast } from 'react-toastify'
 import { useForm } from "react-hook-form";
+import {RecaptchaVerifier,  signInWithPhoneNumber } from "firebase/auth";
+
 import axios from "axios"
-
-
+import { auth } from '../firebaseConfig'
 function UserOtpLogin() {
+
+console.log(auth.currentUser);
+
+
     const generateError =(err) =>{
         console.log("tost");
         toast.error(err,{
@@ -19,10 +24,25 @@ function UserOtpLogin() {
 
         const onSubmit = async (datas) => {
 
+            try {
+                const phoneNumber="8921606978"
+                const ph="+91"
+                const cc=ph+phoneNumber
+                
             const  { data }  = await axios.post(
                 "http://localhost:8800/api/auth/otplogin",{ ...datas },{ withCredentials: true});
                         console.log(data);
-                
+
+
+                let recaptchaVerifier=await new RecaptchaVerifier("reqcapcha",{},auth)
+
+                let confirmation=await signInWithPhoneNumber(auth,cc,recaptchaVerifier)
+                console.log(confirmation);
+                                
+            } catch (error) {
+                console.log(error);
+                console.log("catch");
+            }
 
         }
   return (
@@ -68,7 +88,9 @@ function UserOtpLogin() {
           </button>
         </form>
         <ToastContainer />
+             <div id='reqcapcha' >
 
+             </div>
 		<div className="mt-6 text-grey-dark">
                     Already have an account?
                    
@@ -81,5 +103,6 @@ function UserOtpLogin() {
     </div>
   )
 }
+
 
 export default UserOtpLogin

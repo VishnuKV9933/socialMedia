@@ -19,6 +19,9 @@ const PostSchema=new Schema({
     },
     like:{
         type:Array
+    },
+    comments:{
+        type:Array
     }
  },
  {timestamps:true}

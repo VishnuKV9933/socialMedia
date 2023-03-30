@@ -8,10 +8,16 @@ const userRouter=require("./Routes/users")
 const authRouter=require("./Routes/auth")
 const cors = require('cors')
 const cookieParser =require("cookie-parser")
-mongoose.set('strictQuery', true);
+mongoose.set('strictQuery', true); 
+const bodyParser=require('body-parser')
 
 
 dotenv.config();
+
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(express.json()) 
 app.use(helmet())

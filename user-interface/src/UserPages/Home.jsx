@@ -12,6 +12,7 @@ function Home() {
   // const CancelToken =axios.CancelToken;
   // const source1=CancelToken.source();
   const [posts, setPost] = useState([]);
+  const [change, setChange] = useState(true);
   const { setUserId } = useContext(UserDetailsContext);
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
@@ -21,6 +22,7 @@ function Home() {
       setPost(data.data.posts);
     });
   };
+ 
   useEffect(() => {
     axios
       .get(
@@ -30,7 +32,7 @@ function Home() {
       .then((data) => {
         setPost(data.data.posts);
       });
-  }, []);
+  }, [change]);
 
   useEffect(() => {});
 
@@ -112,7 +114,7 @@ function Home() {
 
         <div className=" ">
           {posts.map((post) => {
-            return <PostCard post={post} />;
+            return <PostCard key={post._id} post={post} change={change} setChange={setChange} />;
           })}
         </div>
       </div>

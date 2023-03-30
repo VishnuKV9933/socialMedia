@@ -51,8 +51,6 @@ function PostFormCard2({posts,setPost,postAlert}) {
       .then((data) => {
      
        setPost([data.data, ...posts])
-       console.log("posts");
-       console.log(posts);
        setDescription(null)
        setfile(null)
        postAlert()

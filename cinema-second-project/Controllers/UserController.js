@@ -5,7 +5,9 @@ const sharp = require("sharp");
 const jwt_decode = require("jwt-decode");
 const UserModel =require('../Models/UserModel')
 const PostModel = require("../Models/postModel");
-// const mongoose = require('mongoose');
+const CommentModel=require('../Models/commentModel')
+const replyCommentModel=require('../Models/ReplyCommentModel')
+const mongoose = require('mongoose');
 const { CreateImgUrl } = require("../otherFiles/s3");
 const {
   S3Client,
@@ -13,6 +15,7 @@ const {
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const commentModel = require("../Models/commentModel");
 
 const randomImagename = crypto.randomBytes(32).toString("hex");
 const bucketName = process.env.AWS_Bucket_Name;
@@ -45,7 +48,6 @@ const userPostS3Upload = async (req, res) => {
       });
 
       newPost.save().then((data) => {
-        console.log(data);
         res.send(data);
       });
     } else { 
@@ -71,7 +73,6 @@ const userPostS3Upload = async (req, res) => {
 
       const token = req.headers.jwt;
       const decoded = jwt_decode(token);
-      console.log(decoded.id);
       // const id = mongoose.Types.ObjectId(decoded.id);
       // const user=await UserModel.findOne({_id:id})
 
@@ -88,7 +89,6 @@ const userPostS3Upload = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log("catch");
     console.log(err);
   }
 };
@@ -114,7 +114,6 @@ const getPosts = async (req, res) => {
 
     res.json({ posts: posts });
   } catch (error) {
-    console.log("get posts catch");
     console.log(error);
   }
 };
@@ -123,18 +122,14 @@ const likeUnlike = async (req, res) => {
   try {
     const post = await PostModel.findById(req.body.postId);
     if (!post.like.includes(req.params.id)) {
-      console.log("liked");
       await post.updateOne({ $push: { like: req.params.id } });
       const post2 = await PostModel.findById(req.body.postId);
       const likeCount = post2.like.length;
-      console.log("likeCount:",likeCount);
       res.status(200).json({ liked: true, count: likeCount });
-    } else {
-      console.log("unliked");
+    } else { 
       await post.updateOne({ $pull: { like: req.params.id } });
       const post2 = await PostModel.findById(req.body.postId);
       const likeCount = post2.like.length;
-      console.log("likeCount:",likeCount);
       res.status(200).json({ liked: false, count: likeCount });
     }
   } catch (err) {
@@ -144,16 +139,96 @@ const likeUnlike = async (req, res) => {
 };
  
 const getuser =async(req,res)=>{
-  console.log(req.body);
   const post = await UserModel.findById(req.body.userId);
-  console.log(post);
   res.json(post)
 
 }
+
+const addComment=async(req,res)=>{
+  const post = await PostModel.findById(req.body.postId);
+  const user= await UserModel.findById(req.body.userId)
+  const comment = new CommentModel({ 
+    userId:req.body.userId,
+    userName:user.username,
+    postId:req.body.postId, 
+    comment:req.body.comment
+  })
+  const newComment=await comment.save()
+  
+  await post.updateOne({$push:{comments:newComment._id}})
+  res.json(newComment)
+}
+
+
+
+const addReplyComment=async(req,res)=>{
+  const comment = await CommentModel.findById(req.body.commentId);
+  const user= await UserModel.findById(req.body.userId)
+  const replyComment = new replyCommentModel({ 
+    userId:req.body.userId,
+    userName:user.username,
+    commentId:req.body.commentId, 
+    reply:req.body.reply
+  })
+  const newReplyComment=await replyComment.save()
+  
+  await comment.updateOne({$push:{reply:newReplyComment._id}})
+  res.json(newReplyComment)
+}  
+
+const getCommets=async(req,res)=>{
+
+      const postId = mongoose.Types.ObjectId(req.body.postId);
+    
+const comments =await commentModel.find({postId:postId})
+comments.reverse()
+res.json(comments)
+
+}
+
+const getReplyCommets=async(req,res)=>{
+console.log("back get reply");
+  const commentId = mongoose.Types.ObjectId(req.params.commetId);
+
+const replyComments =await replyCommentModel.find({commentId:commentId})
+replyComments.reverse()
+console.log(replyComments);
+res.json({replyComments})
+
+
+
+}
+
+const deleteComment=async(req,res)=>{
+  console.log(req.body);
+  const post = await PostModel.findById(req.body.postId);
+ console.log("post");
+ console.log(post);
+  const comment = new CommentModel({ 
+    userId:req.body.userId,
+    postId:req.body.postId, 
+    comment:req.body.comment
+  })
+  const newComment=await comment.save()
+  console.log("newComment");
+  console.log(newComment);
+  await post.updateOne({$push:{comments:newComment._id}})
+  const post2 = await PostModel.findById(req.body.postId);
+ console.log("post2");
+ console.log(post2);
+  res.json({comment:newComment,post:post})
+} 
+
+
+
 
 module.exports = {
   userPostS3Upload,
   getPosts,
   likeUnlike,
-  getuser
+  getuser,
+  addComment,
+  getCommets,
+  addReplyComment,
+  getReplyCommets
 };

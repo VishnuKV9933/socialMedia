@@ -3,11 +3,11 @@ dotenv.config();
 const crypto = require("crypto");
 const sharp = require("sharp");
 const jwt_decode = require("jwt-decode");
-const UserModel =require('../Models/UserModel')
+const UserModel = require("../Models/UserModel");
 const PostModel = require("../Models/postModel");
-const CommentModel=require('../Models/commentModel')
-const replyCommentModel=require('../Models/ReplyCommentModel')
-const mongoose = require('mongoose');
+const CommentModel = require("../Models/commentModel");
+const replyCommentModel = require("../Models/ReplyCommentModel");
+const mongoose = require("mongoose");
 const { CreateImgUrl } = require("../otherFiles/s3");
 const {
   S3Client,
@@ -50,9 +50,9 @@ const userPostS3Upload = async (req, res) => {
       newPost.save().then((data) => {
         res.send(data);
       });
-    } else { 
+    } else {
       const buffer = await sharp(req.file.buffer)
-        .rotate() 
+        .rotate()
         .resize({
           height: 600,
           width: 800,
@@ -98,7 +98,6 @@ const userPostS3Upload = async (req, res) => {
 const getPosts = async (req, res) => {
   try {
     const posts = await PostModel.find();
-
     for (const post of posts) {
       if (post.image) {
         const getObjectParams = {
@@ -126,7 +125,7 @@ const likeUnlike = async (req, res) => {
       const post2 = await PostModel.findById(req.body.postId);
       const likeCount = post2.like.length;
       res.status(200).json({ liked: true, count: likeCount });
-    } else { 
+    } else {
       await post.updateOne({ $pull: { like: req.params.id } });
       const post2 = await PostModel.findById(req.body.postId);
       const likeCount = post2.like.length;
@@ -137,90 +136,70 @@ const likeUnlike = async (req, res) => {
     res.json({ error: err });
   }
 };
- 
-const getuser =async(req,res)=>{
+
+const getuser = async (req, res) => {
   const post = await UserModel.findById(req.body.userId);
-  res.json(post)
+  res.json(post);
+};
 
-}
-
-const addComment=async(req,res)=>{
+const addComment = async (req, res) => {
   const post = await PostModel.findById(req.body.postId);
-  const user= await UserModel.findById(req.body.userId)
-  const comment = new CommentModel({ 
-    userId:req.body.userId,
-    userName:user.username,
-    postId:req.body.postId, 
-    comment:req.body.comment
-  })
-  const newComment=await comment.save()
-  
-  await post.updateOne({$push:{comments:newComment._id}})
-  res.json(newComment)
-}
+  const user = await UserModel.findById(req.body.userId);
+  const comment = new CommentModel({
+    userId: req.body.userId,
+    userName: user.username,
+    postId: req.body.postId,
+    comment: req.body.comment,
+  });
+  const newComment = await comment.save();
 
+  await post.updateOne({ $push: { comments: newComment._id } });
+  res.json(newComment);
+};
 
-
-const addReplyComment=async(req,res)=>{
+const addReplyComment = async (req, res) => {
   const comment = await CommentModel.findById(req.body.commentId);
-  const user= await UserModel.findById(req.body.userId)
-  const replyComment = new replyCommentModel({ 
-    userId:req.body.userId,
-    userName:user.username,
-    commentId:req.body.commentId, 
-    reply:req.body.reply
-  })
-  const newReplyComment=await replyComment.save()
-  
-  await comment.updateOne({$push:{reply:newReplyComment._id}})
-  res.json(newReplyComment)
-}  
+  const user = await UserModel.findById(req.body.userId);
+  const replyComment = new replyCommentModel({
+    userId: req.body.userId,
+    userName: user.username,
+    commentId: req.body.commentId,
+    reply: req.body.reply,
+  });
+  const newReplyComment = await replyComment.save();
 
-const getCommets=async(req,res)=>{
+  await comment.updateOne({ $push: { reply: newReplyComment._id } });
+  res.json(newReplyComment);
+};
 
-      const postId = mongoose.Types.ObjectId(req.body.postId);
-    
-const comments =await commentModel.find({postId:postId})
-comments.reverse()
-res.json(comments)
+const getCommets = async (req, res) => {
+  const postId = mongoose.Types.ObjectId(req.body.postId);
 
-}
+  const comments = await commentModel.find({ postId: postId });
+  comments.reverse();
+  res.json(comments);
+};
 
-const getReplyCommets=async(req,res)=>{
-console.log("back get reply");
+const getReplyCommets = async (req, res) => {
   const commentId = mongoose.Types.ObjectId(req.params.commetId);
 
-const replyComments =await replyCommentModel.find({commentId:commentId})
-replyComments.reverse()
-console.log(replyComments);
-res.json({replyComments})
+  const replyComments = await replyCommentModel.find({ commentId: commentId });
+  replyComments.reverse();
+  res.json({ replyComments });
+};
 
-
-
-}
-
-const deleteComment=async(req,res)=>{
-  console.log(req.body);
+const deleteComment = async (req, res) => {
   const post = await PostModel.findById(req.body.postId);
- console.log("post");
- console.log(post);
-  const comment = new CommentModel({ 
-    userId:req.body.userId,
-    postId:req.body.postId, 
-    comment:req.body.comment
-  })
-  const newComment=await comment.save()
-  console.log("newComment");
-  console.log(newComment);
-  await post.updateOne({$push:{comments:newComment._id}})
+  const comment = new CommentModel({
+    userId: req.body.userId,
+    postId: req.body.postId,
+    comment: req.body.comment,
+  });
+  const newComment = await comment.save();
+  await post.updateOne({ $push: { comments: newComment._id } });
   const post2 = await PostModel.findById(req.body.postId);
- console.log("post2");
- console.log(post2);
-  res.json({comment:newComment,post:post})
-} 
-
-
-
+  res.json({ comment: newComment, post: post });
+};
 
 module.exports = {
   userPostS3Upload,
@@ -230,5 +209,5 @@ module.exports = {
   addComment,
   getCommets,
   addReplyComment,
-  getReplyCommets
+  getReplyCommets,
 };

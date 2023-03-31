@@ -13,6 +13,7 @@ router.put(`/addcomment`,addComment)
 router.post ("/getcomments",getCommets)
 router.put("/addreplycomments",addReplyComment)
 router.get("/getreplycomments/:commetId",getReplyCommets)
+
  
 module.exports = router 
 

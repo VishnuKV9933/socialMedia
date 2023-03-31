@@ -5,10 +5,12 @@ import UserSignup from './UserPages/UserSignup'
 import Orm from './UserPages/Orm';
 import AdminPage from './AdminPages/AdminLogin';
 import Home from './UserPages/Home'
-import Text from './Text';
+
 import "react-toastify/dist/ReactToastify.css" 
 import AdminHomePage from './AdminPages/AdminHomePage';
 import UserOtpLogin from './UserPages/UserOtpLogin';
+import Profile from './UserPages/Profile';
+
 
 function App() {
     
@@ -24,8 +26,9 @@ function App() {
     <Route exact path="/adminlogin" element={<AdminPage/>} /> 
 
    <Route exact path="/adminhome" element={<AdminHomePage />} /> 
+   <Route exact path="/profile" element={<Profile />} /> 
 
-     
+
  
    </Routes>
    </BrowserRouter>

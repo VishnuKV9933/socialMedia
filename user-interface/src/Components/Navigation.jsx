@@ -32,7 +32,7 @@ function Navigation() {
             <RiChatSmile3Line className="w-8 h-8"/>
             CHATS
             </a>
-          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
+          <a  href="/" className="flex items-center   hover:rounded-full  hover:ml-6  gap-2 py-3">
             <MdNotificationsNone className="w-8 h-8"/>
             NOTICE!
             </a>

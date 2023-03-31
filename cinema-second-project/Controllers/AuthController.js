@@ -2,7 +2,7 @@ const User = require("../Models/UserModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { Error } = require("mongoose");
-
+const UserModel = require("../Models/UserModel");
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.userJwtKey, {
@@ -175,14 +175,48 @@ console.log("adminlogin");
 
 }
 
-const Otplogin=(req,res)=>{
-console.log(req.body);
-res.json({data:true})
+const Otplogin=async(req,res)=>{
+console.log(req.params.mobile);
+
+const user=await UserModel.findOne({mobile:req.params.mobile})
+
+if(!user){
+
+  res.json({user:false})
+}
+else{
+
+  res.json({user:user})
+}
+}
+
+
+const otpVerify=async(req,res)=>{
+
+  const user=await UserModel.findOne({mobile:req.params.mobile})
+
+if(!user){
+
+  res.json({user:false})
+}
+else{
+
+  const token = createToken(user._id);
+  res.cookie("jwt", token, {
+    withCredentials: true,
+    httpOnly: false,
+    maxAge: maxAge * 10000,
+  });
+
+  res.json({user:user})
+}
+
 }
 
 module.exports = {
   userSignUP,
   userLogin,
   AdminLogin,
-  Otplogin
+  Otplogin,
+  otpVerify
 };

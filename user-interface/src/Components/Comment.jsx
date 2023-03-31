@@ -60,13 +60,9 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
         reply:replyComment,
       })
       .then((data) => {
-        
-
         setReplyAllComments([data.data, ...allReplyComments]);
         setReplyComment("")
         setReplyCount(replyCount+1)
-        
-     
       });
     }
   } catch (error) {
@@ -131,7 +127,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
                 )
               })
             }
-        {replyLimit*3<= replyCount&&
+        {replyLimit*3< replyCount&&
          <div
           onClick={setmore}
           className="ml-3 cursor-pointer mt-1 text-sm text-gray-500" >

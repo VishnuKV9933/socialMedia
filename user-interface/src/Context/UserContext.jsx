@@ -1,34 +1,16 @@
 import React ,{useState,createContext} from 'react'
 
-export const UserDetailsContext=createContext(null)
+export const UserContext=createContext(null)
 
-function UserContext({children}) {
-    const [userId,setUserId] = useState(null)
+function User({children}) {
+    const [profileCardName,setProfileCardName] = useState('')
   return (
   
-    <UserDetailsContext.Provider value={{userId,setUserId}}>
+    <UserContext.Provider value={{profileCardName,setProfileCardName}}>
           {children}
-    </UserDetailsContext.Provider>
+    </UserContext.Provider>
   )
 }
 
-export default UserContext
-
-
-
-// import React,{useState,createContext} from 'react'
-
-// export  const UsertokenContext=createContext(null)
-
-// function UserContext({children}) {
-//     const [token,setToken] = useState(null)
-
-//   return (
-//     <UsertokenContext.Provider  value={{token,setToken}}>
-//       {children}
-//     </UsertokenContext.Provider>
-//   )
-// }
-
-// export default UserContext 
+export default User
 

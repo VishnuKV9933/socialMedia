@@ -27,12 +27,15 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture:{
         type:String,
-        required:true,
-       default:" "
+       default:null
     },
     coverPicture:{
         type:String,
-       default:" "
+       default:null
+    },
+    bio:{
+        type:String,
+       default:null
     },
     followers:{
         type:Array,
@@ -42,26 +45,27 @@ const userSchema = new mongoose.Schema({
         type:Array,
         default:[]
     },
+    posts:{
+        type:Array,
+        default:[]
+    },
     isadmin:{
         type:Boolean,
         default:false
     },
-    discription:{
+    bio:{
         type:String,
-        maxLength:50
     },
     city:{
         type:String,
-        maxLength:50
+        maxLength:50,
+        default:null
     },
-    from:{
+    school:{
         type:String,
-        maxLength:50
+        maxLength:50,
+        default:null
     },
-    relationship:{
-        type:Number,
-        enum:[1,2,3]
-    }
 },
 {timestamps:true}
 )

@@ -1,102 +1,501 @@
-import React from 'react'
-
+import React, { useEffect, useState,useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { CiLocationOn } from "react-icons/ci";
+import { TbSchool } from "react-icons/tb";
+import axios from "axios";
+import Modal from "../Components/Modal";
+import "../Icons/input.css";
+import { defaultProfilePicUrl, fileSelector } from "../Utility/utility";
+import ProfilePostCard from "../Components/ProfilePostCard";
+import { UserContext } from "../Context/UserContext";
+import { ProfileCardUrlContext } from "../Context/ProflePicContext";
 const Profile = () => {
-  return (
-    <div>
-      <link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/styles/tailwind.css"/>
-<link rel="stylesheet" href="https://demos.creative-tim.com/notus-js/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css"/>
+  const {setProfileCardName} =useContext(UserContext)
+  const {setProfileCardUrl} =useContext(ProfileCardUrlContext)
+  const [profile, setProfile] = useState(null);
+  const [followersCount, setFollowersCount] = useState(null);
+  const [followingCount, setFollowingCount] = useState(null);
+  const [postCount, setPostCount] = useState(null);
+  const [posts, setPosts] = useState([]);
+  const [isOpon, setIsOpen] = useState(false);
+  const [profilePicOpen, SetProfilePicOpen] = useState(false);
+  const [place, setPlace] = useState(null);
+  const [currentPlace, setCurrentPlace] = useState(null);
+  const [school, setSchool] = useState(null);
+  const [currentSchool, setCurrentSchool] = useState(null);
+  const [bio, setBio] = useState(null);
+  const [currentBio, setCurrentBio] = useState(null);
+  const [name, setProfileUserName] = useState(null);
+  const [currentName, setCurrentName] = useState(null);
+  const navigate = useNavigate();
 
-<main class="profile-page">
-  <section class="relative block h-500-px">
-    <div class="absolute top-0 w-full h-full bg-center bg-cover" style="
-            background-image: url('https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2710&amp;q=80');
-          ">
-      <span id="blackOverlay" class="w-full h-full absolute opacity-50 bg-black"></span>
-    </div>
-    <div class="top-auto bottom-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden h-70-px" style="transform: translateZ(0px)">
-      <svg class="absolute bottom-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" version="1.1" viewBox="0 0 2560 100" x="0" y="0">
-        <polygon class="text-blueGray-200 fill-current" points="2560 0 2560 100 0 100"></polygon>
-      </svg>
-    </div>
-  </section>
-  <section class="relative py-16 bg-blueGray-200">
-    <div class="container mx-auto px-4">
-      <div class="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-xl rounded-lg -mt-64">
-        <div class="px-6">
-          <div class="flex flex-wrap justify-center">
-            <div class="w-full lg:w-3/12 px-4 lg:order-2 flex justify-center">
-              <div class="relative">
-                <img alt="..." src="https://demos.creative-tim.com/notus-js/assets/img/team-2-800x800.jpg" class="shadow-xl rounded-full h-auto align-middle border-none absolute -m-16 -ml-20 lg:-ml-16 max-w-150-px"/>
+  const [profilePictureUrl, setProfilePictureUrl] =
+    useState(defaultProfilePicUrl);
+  const [changeProfilepicButton, setChangeProfilepicButton] = useState(false);
+  const [file, setfile] = useState(null);
+  const [profilePicturePreviewUrl, setProfilePicturePreviewUrl] = useState(defaultProfilePicUrl);
+
+  const userId = JSON.parse(localStorage.getItem("userId"));
+
+  
+
+  const selectFile = fileSelector(setfile, setProfilePicturePreviewUrl);
+
+  useEffect(() => {
+    if (!userId) {
+      navigate("/");
+    }
+    const getUser = async () => {
+      const userId = JSON.parse(localStorage.getItem("userId"));
+      if (!userId) {
+        navigate("/");
+      }
+      
+      const user = await axios.post("http://localhost:8800/api/users/getuser", {
+        userId: userId,
+      });
+      
+   
+
+      setProfile(user.data);
+      setFollowersCount(user.data.followers.length);
+      setFollowingCount(user.data.following.length);
+      setPostCount(user.data.posts.length);
+      setPlace(user.data.city);
+      setCurrentPlace(user.data.city);
+      setSchool(user.data.school);
+      setCurrentSchool(user.data.school);
+      setBio(user.data.bio);
+      setCurrentBio(user.data.bio);
+
+      setProfileUserName(user.data.username);
+      setProfileCardName(user.data.username)
+      // setprofileCarduser((previous)=>({...previous,name:user.data.username}))
+      setCurrentName(user.data.username);
+      if (user.data.profilePicture) {
+        setProfilePictureUrl(user.data.profilePicture);
+        setProfileCardUrl(user.data.profilePicture)
+        setProfileCardName(user.data.username)
+
+        setProfilePicturePreviewUrl(user.data.profilePicture);
+      } else {
+        setProfilePictureUrl(defaultProfilePicUrl);
+        setProfilePicturePreviewUrl(defaultProfilePicUrl);
+      }
+    };
+
+    if (!profile) {
+      getUser();
+    }
+  }, [userId]);
+
+  const detailsSubmit = async (e) => {
+    e.preventDefault();
+    const data = {
+      city: place,
+      school: school,
+      bio: bio,
+      userId: userId,
+      name: name,
+    };
+    await axios
+      .put("http://localhost:8800/api/users/updateprofile", data)
+      .then((res) => {
+        if (res.data.update) {
+          const { city, bio, school, username } = res.data;
+        
+          if (username) {
+            setProfileUserName(username);
+           setProfileCardName(username)
+           
+           
+            // setprofileCarduser((previous)=>({...previous,name:username}))
+
+            setCurrentName(username);
+          } else {
+            setProfileUserName(currentName);
+            // setprofileCarduser((previous)=>({...previous,name:username}))
+            setProfileCardName(currentName)
+         
+           
+          }
+          if (city) {
+            setPlace(city);
+            setCurrentPlace(city);
+          } else {
+            setCurrentPlace("location not added");
+            setPlace("place");
+          }
+
+          if (bio) {
+            setBio(bio);
+            setCurrentBio(bio);
+          } else {
+            setBio("bio");
+            setCurrentBio("Bio not added");
+          }
+
+          if (school) {
+            setCurrentSchool(school);
+            setSchool(school);
+          } else {
+            setCurrentSchool("school not added");
+            setSchool("school");
+          }
+        }
+      });
+
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    const getPost = async () => {
+      try {
+        axios
+          .get(`http://localhost:8800/api/users/userpost/${userId}`)
+          .then((data) => {
+            setPosts(data.data.posts);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getPost();
+  }, [userId]);
+
+  const removeProfilePicture = () => {
+    try {
+      if (profilePictureUrl !== defaultProfilePicUrl) {
+        axios
+          .put(`http://localhost:8800/api/users/removeprofilpicture/${userId}`)
+          .then((res) => {
+            setProfilePictureUrl(defaultProfilePicUrl);
+            setProfileCardUrl(defaultProfilePicUrl)
+          });
+      }
+     
+                SetProfilePicOpen(false);
+              
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateProfilePic = (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("image", file[0]);
+
+    axios
+      .post(
+        `http://localhost:8800/api/users/profilpictureupdate/${userId}`,
+        data,
+        {
+          headers: { ContentType: "multipart/form-data" },
+        }
+      )
+      .then((res) => {
+        if (res.data.update) {
+          const { profilePictureUrl } = res.data;
+          setProfilePictureUrl(profilePictureUrl);
+          setProfileCardUrl(profilePictureUrl)
+          setChangeProfilepicButton(false);
+        }
+      
+        SetProfilePicOpen(false);
+      
+      });
+
+
+  };
+
+
+ 
+
+  return (
+    <div className="w-full ">
+      {/* ---------------------------------edit details----------------------------------- */}
+      <Modal
+        id="editDetails"
+        onClose={() => {
+          setIsOpen(false);
+          setSchool(currentSchool);
+          setPlace(currentPlace);
+          setBio(currentBio);
+        }}
+        open={isOpon}
+      >
+        <form onSubmit={detailsSubmit}>
+          <div className="w-64 h-64 flex content-center flex-col p-2">
+            <div className="flex justify-center mb-4 font-semibold text-">
+              <label className="ml-2 ">Edit Details</label>
+            </div>
+            <input
+              onChange={(e) => {
+                setProfileUserName(e.target.value);
+              }}
+              type="text"
+              autocomplete="off"
+              name="city"
+              className="input w-full h-10"
+              placeholder={currentName}
+            />
+            <input
+              onChange={(e) => {
+                setPlace(e.target.value);
+              }}
+              type="text"
+              autocomplete="off"
+              name="city"
+              className="input w-full h-10 mt-3"
+              placeholder={place ? place : "place"}
+            />
+            <input
+              onChange={(e) => {
+                setSchool(e.target.value);
+              }}
+              type="text"
+              autocomplete="off"
+              className="input w-full h-10 mt-3"
+              placeholder={school ? school : "school"}
+            />
+            <input
+              onChange={(e) => {
+                setBio(e.target.value);
+              }}
+              type="text"
+              autocomplete="off"
+              className="input w-full h-10 mt-3"
+              placeholder={bio ? bio : "bio"}
+            />
+          </div>
+          <div className="flex justify-center">
+            <button
+              className="w-24 h-8 font-semibold rounded-md bg-blue-100 hover:bg-blue-200 "
+              type="submit"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </Modal>
+      {/* --------------------------------------------edit Profile Pic--------------------------------- */}
+
+      <Modal
+        onClose={() => {
+          setfile(null);
+        
+          SetProfilePicOpen(false);
+        
+
+          setChangeProfilepicButton(false);
+        
+          setProfilePicturePreviewUrl(profilePictureUrl);
+        }}
+        open={profilePicOpen}
+      >
+        <div>
+          <div className="w-64 h-fit">
+            <img id="profilePocmodalImage" src={profilePicturePreviewUrl} alt="img" />
+          </div>
+        </div>
+
+        <div className="flex w-full justify-center items-center gap-1 h-12 ">
+          <form onSubmit={updateProfilePic}>
+            <div className="w-28 h-8 bg-red-400 flex justify-center items-center rounded-md">  
+            {
+              
+            changeProfilepicButton ? (
+              file ? (
+                
+                <button className="w-full h-full rounded-md 
+                bg-red-600 w-full h-full flex justify-center items-center
+text-white bg-gradient-to-br from-purple-600 to-blue-500 
+hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 
+dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center 
+                " type="submit">OK </button>
+
+              ) : (
+                selectFile
+                // <div className="bg-red-600 w-full h-full"> selectFile</div>
+              )
+            ) : (
+              <div className="bg-red-300 w-full h-full flex items-center justify-center
+              text-white bg-gradient-to-br from-purple-600 to-blue-500 
+hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 
+dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center "
+                onClick={(e) => {
+                  setChangeProfilepicButton(true);
+                 
+                  SetProfilePicOpen(true);
+                
+                  e.stopPropagation()
+
+
+                }}
+              >Update
+              </div>
+            )
+
+
+          }
+          </div>
+          </form>
+
+          {(changeProfilepicButton && (
+            <button className="w-28 h-8 bg-blue-200
+             flex justify-center items-center
+text-white bg-gradient-to-br from-purple-600 to-blue-500 
+hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 
+dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center 
+
+            "
+              onClick={() => {
+                setfile(null);
+                setProfilePicturePreviewUrl(profilePictureUrl);
+                setChangeProfilepicButton(false);
+
+              }}
+            >
+              Cancel
+            </button>
+          )) || <button className="bg-blue-200 w-28 h-8
+          text-white bg-gradient-to-br from-purple-600 to-blue-500 
+hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 
+dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center 
+          " onClick={() =>{ 
+            removeProfilePicture()
+
+            }}>remove</button>}
+        </div>
+      </Modal>
+      {/* --------------------------------------------edit Profile Pic--------------------------------- */}
+
+     
+     
+
+      <div className=" z-10  w-full ">
+        <div className="">
+          {/* ----------------------------------------------------------put content below this till right---------------------------------------------------------------- */}
+
+          {/* ----------------------------------------------------------Profile main div---------------------------------------------------------------- */}
+
+          <div className="w-full h-96 bg-white drop-shadow-xl  rounded-md flex relative">
+            {/* ----------------------------------------------------------Profile picture---------------------------------------------------------------- */}
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+             
+                SetProfilePicOpen(true);
+               
+              }}
+              className="w-28 h-28 flex justify-center items-center  rounded-full bg-blue-200 overflow-hidden absolute z-10 bottom-56  left-10 P-3"
+            >
+              <div className="">
+                <div className=" w-44  rounded-full overflow-hidden ">
+                  <img className="" src={profilePictureUrl} alt="img" />
+                </div>
               </div>
             </div>
-            <div class="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
-              <div class="py-6 px-3 mt-32 sm:mt-0">
-                <button class="bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
-                  Connect
+            {/* ----------------------------------------------------------Profile picture---------------------------------------------------------------- */}
+            {/* ----------------------------------------------------------banner---------------------------------------------------------------- */}
+            <div className="w-full ml-2 mr-2 mt-2 mb-2 bg-slate-400 pb-2  ">
+              <div id="banner image" className="w-full h-1/2 z-0">
+                <img
+                  className="w-full h-full "
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRL7jzK2ICaXPQX22easResZcneq_RMcA_V6y4PFTFCog&usqp=CAU&ec=48665701"
+                  alt="img"
+                />
+              </div>
+            </div>
+
+            {/* ----------------------------------------------------------banner---------------------------------------------------------------- */}
+            {/* ----------------------------------------------------------profiledetails---------------------------------------------------------------- */}
+
+            <div
+              style={{ marginLeft: "5%", marginRight: "5%" }}
+              className="h-64 bg-white w-w90 rounded-md absolute bottom-6 overflow-hidden"
+            >
+              <div className=" ">
+                <div className="w-full h-auto   flex-wrap">
+                  <div className=" w-full h-auto flex flex-col items-center justify-center  ">
+                    <div className="mt-4 font-sans font-extrabold ">
+                      {profile ? currentName : ""}
+                    </div>
+                    <div className="text-sm flex">
+                      <CiLocationOn className="mt-1" />
+                      {profile
+                        ? profile.city
+                          ? currentPlace
+                          : "Location not added"
+                        : ""}
+                    </div>
+                    <div className="text-sm flex gap-1">
+                      <TbSchool className="mt-1" />
+                      {profile
+                        ? profile.school
+                          ? currentSchool
+                          : "School not added"
+                        : ""}
+                    </div>
+                  </div>
+                  <div className=" w-full h-14  flex justify-center gap-4 mt-4 ">
+                    <followers className="flex-col justify-center items-center   p-1">
+                      <div className="font-serif text-ssm">Followers</div>
+                      <div className="font-serif ">{followersCount}</div>
+                    </followers>
+                    <following className="flex-col justify-center items-center  p-1">
+                      <div className="font-serif text-ssm">Following</div>
+                      <div className="font-serif ml-3">{followingCount}</div>
+                    </following>
+                    <posts className="flex-col justify-center items-center  p-1">
+                      <div className="font-serif text-ssm">Posts</div>
+                      <div className="font-serif">{postCount}</div>
+                    </posts>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute top-4 right-8 ">
+                <button
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                  className="border-2 rounded-full border-blue-600  text-blue-600 font-serif text-ssm p-1 hover:bg-blue-600 hover:text-white hover:font-semibold"
+                >
+                  Edit details
                 </button>
               </div>
-            </div>
-            <div class="w-full lg:w-4/12 px-4 lg:order-1">
-              <div class="flex justify-center py-4 lg:pt-4 pt-8">
-                <div class="mr-4 p-3 text-center">
-                  <span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">22</span><span class="text-sm text-blueGray-400">Friends</span>
-                </div>
-                <div class="mr-4 p-3 text-center">
-                  <span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">10</span><span class="text-sm text-blueGray-400">Photos</span>
-                </div>
-                <div class="lg:mr-4 p-3 text-center">
-                  <span class="text-xl font-bold block uppercase tracking-wide text-blueGray-600">89</span><span class="text-sm text-blueGray-400">Comments</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="text-center mt-12">
-            <h3 class="text-4xl font-semibold leading-normal mb-2 text-blueGray-700 mb-2">
-              Jenna Stones
-            </h3>
-            <div class="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold uppercase">
-              <i class="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-              Los Angeles, California
-            </div>
-            <div class="mb-2 text-blueGray-600 mt-10">
-              <i class="fas fa-briefcase mr-2 text-lg text-blueGray-400"></i>Solution Manager - Creative Tim Officer
-            </div>
-            <div class="mb-2 text-blueGray-600">
-              <i class="fas fa-university mr-2 text-lg text-blueGray-400"></i>University of Computer Science
-            </div>
-          </div>
-          <div class="mt-10 py-10 border-t border-blueGray-200 text-center">
-            <div class="flex flex-wrap justify-center">
-              <div class="w-full lg:w-9/12 px-4">
-                <p class="mb-4 text-lg leading-relaxed text-blueGray-700">
-                  An artist of considerable range, Jenna the name taken by
-                  Melbourne-raised, Brooklyn-based Nick Murphy writes,
-                  performs and records all of his own music, giving it a
-                  warm, intimate feel with a solid groove structure. An
-                  artist of considerable range.
-                </p>
-                <a href="#pablo" class="font-normal text-pink-500">Show more</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <footer class="relative bg-blueGray-200 pt-8 pb-6 mt-8">
-  <div class="container mx-auto px-4">
-    <div class="flex flex-wrap items-center md:justify-between justify-center">
-      <div class="w-full md:w-6/12 px-4 mx-auto text-center">
-        <div class="text-sm text-blueGray-500 font-semibold py-1">
-          Made with <a href="https://www.creative-tim.com/product/notus-js" class="text-blueGray-500 hover:text-gray-800" target="_blank">Notus JS</a> by <a href="https://www.creative-tim.com" class="text-blueGray-500 hover:text-blueGray-800" target="_blank"> Creative Tim</a>.
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
-  </section>
-  </main>
-    </div>
-  )
-}
 
-export default Profile
+              <div className="ml-10 font-serif text-sm">Bio</div>
+              <div className="text-ssm px-8 py-2 ">
+                {profile ? (profile.bio ? currentBio : "Bio not added") : ""}
+              </div>
+            </div>
+            {/* ----------------------------------------------------------profiledetails---------------------------------------------------------------- */}
+          </div>
+          {/* ----------------------------------------------------------Profile main div---------------------------------------------------------------- */}
+
+          {/* =======================================posts====================================================================== */}
+
+          <div className="">
+            {posts.map((post) => {
+              return <ProfilePostCard key={post._id} setPosts={setPosts} post={post} />;
+            })}
+          </div>
+
+          {/* =======================================posts====================================================================== */}
+
+          {/* -----------------------------------------------------------------------right---------------------------------------------------------- */}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Profile;

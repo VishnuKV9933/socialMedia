@@ -7,23 +7,22 @@ import {GrFormClose} from 'react-icons/gr'
 import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import EditPost from './EditPost'
+
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
 
 // import it first.
 import vi from 'timeago.js/lib/lang/vi';
 timeago.register('vi', vi);
-
-
 // import { useInView } from 'react-intersection-observer';
 
-function PostCard({ post,
+function ProfilePostCard({ post,
   posts,
-  setPost
-  })
-  
-  
-  {
+  setPosts
+  }) {
+
+
+
   const userId = JSON.parse(localStorage.getItem("userId"));
   const [limit, setLimit] = useState(0);
   const [isliked, setIsLiked] = useState(post?.like?.includes(userId));
@@ -34,12 +33,8 @@ function PostCard({ post,
   const [postOptions,setPostOptions]=useState(false)
   const [editOpen,setEditOpen]=useState(false)
   const [deleteOpen,setDeleteOpen]=useState(false)
- 
 
   const navigate =useNavigate()
-
-  console.log(post);
-
 
   const {_id}=post
   const commentIds={postId:_id,userId:userId}
@@ -86,7 +81,7 @@ function PostCard({ post,
          
     axios.get(`http://localhost:8800/api/users/getposts`).then((data) => {
  
-    setPost(data.data.posts);
+    setPosts(data.data.posts);
   });
         } )
       setDeleteOpen(false)
@@ -103,11 +98,12 @@ function PostCard({ post,
   // }
   
   const postCaller =async () => {
-
-     axios.get(`http://localhost:8800/api/users/getposts`).then((data) => {
-      console.log("postcaller1",data);
-  
-         setPost(data.data.posts )
+console.log("postcaller2");
+  await  axios
+    .get(`http://localhost:8800/api/users/userpost/${userId}`)
+    .then((data) => {
+        console.log(data.data.posts);
+      setPosts(data.data.posts);
        
      });
    };
@@ -123,8 +119,8 @@ function PostCard({ post,
           }}
         open={editOpen} >
           <div className="w-72 h-fit">
-          <EditPost postId={_id} setEditOpen={setEditOpen} postCaller={postCaller} setMore={setMore} 
-           setPost={setPost} posts={posts}></EditPost>
+          <EditPost postId={_id} postCaller={postCaller} setEditOpen={setEditOpen} setMore={setMore} 
+           setPost={setPosts} posts={posts}></EditPost>
 
           </div>
        </Modal>
@@ -197,10 +193,10 @@ function PostCard({ post,
               <div className="">
                 <div className="text-lg font-medium">John Doe<span className="text-sm ml-4 text-gray-600">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
                 <div className="text-sm text-gray-500">
-                <TimeAgo
-  datetime={post?.updatedAt}
-  locale='en'
-/>
+                                <TimeAgo
+                  datetime={post?.updatedAt}
+                  locale='en'
+                />
                 </div>
               </div>
             </div>
@@ -280,4 +276,4 @@ function PostCard({ post,
   );
 }
 
-export default PostCard;
+export default ProfilePostCard;

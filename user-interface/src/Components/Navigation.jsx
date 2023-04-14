@@ -4,13 +4,14 @@ import {CgProfile,CgMoreR} from "react-icons/cg"
 import {MdNotificationsNone} from "react-icons/md"
 import {BiLogOutCircle} from "react-icons/bi"
 import { useCookies } from "react-cookie";
-import {useNavigate} from "react-router-dom"
+import {useNavigate, NavLink} from "react-router-dom"
 function Navigation() {
   const navigate = useNavigate();
   const [cookies, removeCookie] = useCookies([]);
   const logout =() => {
     removeCookie("jwt");
-    navigate("/userLogin");                                                         
+    navigate("/userLogin");
+    localStorage.removeItem("userId");                                                         
   };
   return (
     // bg-gradient-to-b from-pink-100  to-blue-100 hover:from-blue-100 hover:to-pink-100
@@ -18,28 +19,28 @@ function Navigation() {
         <h2>Navigation</h2>
 <div className='' >
 
-          <a  href="/" className=" flex items-center   hover:rounded-full hover:ml-6   gap-2 py-3">
+          <NavLink  to='/' className=" flex items-center   hover:rounded-full hover:ml-6   gap-2 py-3">
             <RiHomeLine className="  w-8 h-8" />
             HOME
-            </a>
+            </NavLink>
 </div>
 
-          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
+          <button onClick={() => navigate('/profile')}  className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <CgProfile className="w-8 h-8"/>
             PROFILE
-            </a>
-          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
+            </button>
+          <NavLink  to="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <RiChatSmile3Line className="w-8 h-8"/>
             CHATS
-            </a>
-          <a  href="/" className="flex items-center   hover:rounded-full  hover:ml-6  gap-2 py-3">
+            </NavLink>
+          <NavLink  to="/" className="flex items-center   hover:rounded-full  hover:ml-6  gap-2 py-3">
             <MdNotificationsNone className="w-8 h-8"/>
             NOTICE!
-            </a>
-          <a  href="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
+            </NavLink>
+          <NavLink  to="/" className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <CgMoreR className="w-8 h-8"/>
             MORE
-            </a>
+            </NavLink>
           <button onClick={logout} className="flex items-center  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <BiLogOutCircle className="w-8 h-8"/>
             LOGOUT

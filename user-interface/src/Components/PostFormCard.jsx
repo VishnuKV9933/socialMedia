@@ -6,9 +6,16 @@ import { HiOutlineTrash } from "react-icons/hi2";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import ShareButton from "./SharaButton";
+// import { useDispatch, useSelector } from "react-redux";/redux
+// import { setPosts } from "../redux/store";
 
-function PostFormCard2({posts,setPost,postAlert}) {
-
+function PostFormCard2({postAlert,
+  posts,
+  setPost
+}) {
+  // redux
+  // const dispatch = useDispatch()
+  // const posts = useSelector(state=> state.posts)
   const [description, setDescription] = useState("");
   const [file, setfile] = useState(null);
   const textareaRef = useRef(null);
@@ -38,7 +45,7 @@ function PostFormCard2({posts,setPost,postAlert}) {
       data.append("description", description);
     }else if(file){
       data.append("image", file[0]);
-    }else if(description){
+    }else if(description?.trim()!==""){
       data.append("description", description);
     }else{
       return
@@ -49,11 +56,15 @@ function PostFormCard2({posts,setPost,postAlert}) {
         headers: { ContentType: "multipart/form-data", jwt: jwt },
       })
       .then((data) => {
-     
-       setPost([data.data, ...posts])
+        // redux
+    //  dispatch(setPosts({
+    //   posts : [data.data, ...posts]
+    //  }))
+    setPost([data.data, ...posts])
        setDescription(null)
        setfile(null)
        postAlert()
+       textareaRef.current.value='';
       })
       .catch((e) => {
         console.log(e);

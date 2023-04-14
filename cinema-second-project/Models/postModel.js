@@ -22,6 +22,10 @@ const PostSchema=new Schema({
     },
     comments:{
         type:Array
+    },
+    updated:{
+        type:Boolean,
+        default:false
     }
  },
  {timestamps:true}

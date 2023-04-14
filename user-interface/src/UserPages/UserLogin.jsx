@@ -1,12 +1,37 @@
- 
+
+import { useContext, useEffect } from 'react';
 import { Link ,useNavigate} from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import { ToastContainer,toast } from 'react-toastify'
 import axios from "axios"
+import { ProfileDetailsContext } from '../Context/ProfileContext';
+import { useCookies } from "react-cookie";
+
+
 
 const UserLogin = () => {
-  console.log("user login react");
+
   const navigate=useNavigate()
+
+
+  const userId = JSON.parse(localStorage.getItem('userId'));
+  // if(userId){
+  //   navigate('/')
+  // }else{
+  //   navigate('/userlogin')
+  // }
+
+  useEffect(()=>{
+    if(userId){
+      navigate('/')
+    }
+  },[])
+
+  const [cookies, removeCookie] = useCookies([]);
+  const { setProfile } = useContext(ProfileDetailsContext);
+
+
+  console.log("user login react");
  const generateError =(err) =>{
   console.log("tost");
   toast.error(err,{
@@ -39,10 +64,50 @@ console.log(data);
             generateError(password)
           }
         }else{ 
+          
+
+console.log("-----1-----");
+
+    const verifyUser = async () => {
+      console.log("-----1-----");
+
+      if (!cookies.jwt) {
+        console.log("-----0-----");
+
+        navigate("/userLogin");
+      } else {
+        console.log("-----2-----");
+
+        const { data } = await axios.post(
+          "http://localhost:8800/api/auth",
+          {},
+          {
+            withCredentials: true,
+          }
+        );
+        if (!data.status) {
+          console.log("-----3-----");
+
+          removeCookie("jwt");
+          navigate("/userLogin");
+        } else {
+          console.log("-----4-----");
+
+          localStorage.setItem('userId', JSON.stringify(data.user._id));
           navigate("/")
         }
       }
+    };
+    verifyUser();
+ 
+
+
+
+        }
+      }
     } catch (err) {
+      console.log("-----5-----");
+
       console.log(err);
       console.log("data");
     }
@@ -109,8 +174,12 @@ console.log(data);
         <ToastContainer />
 
 		<div className="mt-6 text-grey-dark">
-                    Already have an account?
-                    <Link to={"/usersignup"}><span style={{color:"blue"}} >Sign up</span></Link>
+                    Don't have an account ?
+                    <Link to={"/usersignup"}><span className='ml-2' style={{color:"blue"}} >Sign up</span></Link>
+                </div>
+
+                <div className="mt-6 text-grey-dark">
+                    <Link to={"/userotplogin"}><span style={{color:"blue"}} >Login with OTP</span></Link>
                 </div>
     </div>
   </section>

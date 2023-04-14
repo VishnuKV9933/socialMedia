@@ -1,7 +1,7 @@
-const User = require("../Models/UserModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { Error } = require("mongoose");
+const User = require("../Models/UserModel");
 const UserModel = require("../Models/UserModel");
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
@@ -62,6 +62,7 @@ const userSignUP = async (req, res) => {
       email: req.body.email,
       mobile: req.body.mobile,
       password: hashPassword,
+      
     });
     await newUser.save().then((user) => {
       const token = createToken(user._id);

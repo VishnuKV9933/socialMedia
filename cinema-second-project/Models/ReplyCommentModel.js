@@ -14,6 +14,10 @@ const replyCommentSchema=new Schema({
         type:ObjectId,
         required:true
     },
+    postId:{
+        type:ObjectId,
+        required:true
+    },
     reply:{
         type:String,
         requied:true

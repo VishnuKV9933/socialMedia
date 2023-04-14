@@ -57,8 +57,8 @@ export default function UserSignup() {
             }
             console.log("................8...................");
           }else{
-            console.log("else");
-             navigate("/")
+         
+             navigate("/userLogn")
           }
           console.log("/navigater");
          

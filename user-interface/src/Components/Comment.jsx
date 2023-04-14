@@ -1,9 +1,10 @@
 import axios from "axios";
 import React, { useState,useRef, useContext, useEffect } from "react";
 import { AiOutlineSend } from "react-icons/ai";
-import { UserDetailsContext } from "../Context/UserContext";
 import ReplyComment from "./ReplyComment";
-function Comment({ comment}) {
+import { CommentContextSet } from "../Context/CommetContext";
+function Comment({ comment,postUserId,postId,setArrayLength,limit,commetnReducer}) {
+
 
   const textareaRef = useRef(null);
 
@@ -17,21 +18,35 @@ function Comment({ comment}) {
 
   const [allReplyComments, setReplyAllComments] = useState([]);
 
-  const { userId } = useContext(UserDetailsContext);
+  const [deleteComment,setDeleteComment]=useState(false)
+
+  const [deleteAllComment,setDleteAllComment]=useState(false)
+
+  const userId = JSON.parse(localStorage.getItem("userId"));
   
-  const handleChange=(e)=>{
-    setReplyComment(e.target.value)
-  }
+  const {allComments, setAllComments}=useContext(CommentContextSet);
+
+  useEffect(()=>{
+
+    const userId = JSON.parse(localStorage.getItem("userId"));
+    if(userId===comment.userId){
+      setDeleteComment(true)
+    }
+
+    if(userId===postUserId){
+      setDleteAllComment(true)
+    }
+
+  },[userId,comment.userId])
+ 
   
   useEffect(()=>{
    const  getRplayComments=async()=>{ 
 const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/${comment._id}`)
     
-
       setReplyCount(data.data.replyComments.length);
       const array = data.data.replyComments.slice(0, replyLimit * 3);
       setReplyAllComments(array);
-   
    }
    if(openReply) {
 
@@ -42,12 +57,60 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
  
   },[openReply,comment._id,replyLimit])
 
+  const  getRplayComments=async()=>{ 
+    const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/${comment._id}`)
+        
+    
+          setReplyCount(data.data.replyComments.length);
+          const array = data.data.replyComments.slice(0, replyLimit * 3);
+          setReplyAllComments(array);
+       
+       }
+      
+
+
+  const getComments = async () => {
+    await axios
+      .post(`http://localhost:8800/api/users/getcomments`, {
+        postId:postId,
+      })
+      .then((data) => {
+         setArrayLength(data.data.length);
+         const array = data.data.slice(0, limit * 3);
+        setAllComments(array);
+      });
+  };
+
+
+
+  const handleChange=(e)=>{
+    setReplyComment(e.target.value)
+  }
+
   const setmore=()=>{
     setReplyLimit(replyLimit+1)
   }
   const setless=()=>{
     setReplyLimit(1)
   }
+
+  const commentDeleter=()=>{
+
+    axios.delete(`http://localhost:8800/api/users/delete/${postId}/comment/${comment._id}`).then(()=>{
+      getComments()
+    })
+
+  }
+
+  const replyCommentDeleter=(reply)=>{
+
+    axios.delete(`http://localhost:8800/api/users/deletereply/${comment._id}/comment/${reply._id}`).then(()=>{
+      // getComments()
+      getRplayComments()
+    })
+
+  }
+
 
   const submit =(e) => {
     try {
@@ -68,6 +131,16 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
   } catch (error) {
     console.log(error);
   }
+
+  const deleteReplyComment = ()=>{
+    console.log("deletereplsy");
+
+  }
+
+  const deleteReply=()=>{
+
+  }
+
   };
 
   return (
@@ -78,16 +151,23 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
           <div className="">{comment.comment}</div>
         </div>
       </div>
-
       <div className="flex" id="reply section">
         <div className="ml-6 text-sm text-gray-400">{replyCount}</div>
         <div
           onClick={() => {
             setopenReply(!openReply);
           }}
-          className="ml-1 text-sm text-gray-400 hover:text-gray-900 cursor-pointer">
-          reply
+          className="ml-1  text-sm text-gray-400 hover:text-gray-900 cursor-pointer">
+          Reply
         </div>
+       { deleteComment||deleteAllComment?<div 
+        onClick={()=>{
+          commentDeleter()
+          commetnReducer()
+          replyCommentDeleter()
+          
+        }}
+        className="ml-40 italic text-sm text-gray-400 hover:text-gray-900 cursor-pointer">Delete</div>:<></>}
       </div>
       {/* -----------------------replycomment------------------------------ */}
       {openReply && (
@@ -123,7 +203,20 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
             {
               allReplyComments.map((elem)=>{
                 return (
-                  <ReplyComment key={elem._id} reply={elem} />
+                  <div>
+                    <ReplyComment key={elem._id} reply={elem} />
+                    <div  
+
+                                          
+                      onClick={()=>{                    
+                        replyCommentDeleter(elem)
+                        
+                      }}
+
+
+                     className="ml-3  text-sm text-gray-400 hover:text-gray-900 cursor-pointer italic">Delete</div>
+                  </div>
+                 
                 )
               })
             }

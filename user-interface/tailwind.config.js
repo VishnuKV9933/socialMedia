@@ -5,6 +5,14 @@ module.exports = {
   ],
   theme: {
     extend: {
+
+      extend: {
+        maxWidth: {
+          '1': '50px',
+          '4': '40%',
+        }
+      },
+
       colors:{
         "dark-purple":"#081A51",
         "light_white":"rgba(255,255,255,0.17)",

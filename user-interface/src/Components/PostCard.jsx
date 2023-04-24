@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import Card from "./Card";
 import CommendModal from "./CommentModal";
 import {RiMoreFill} from 'react-icons/ri'
@@ -9,21 +9,19 @@ import Modal from "./Modal";
 import EditPost from './EditPost'
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
-
+import {io} from 'socket.io-client'
+import { defaultProfilePicUrl } from "../Utility/utility";
 // import it first.
 import vi from 'timeago.js/lib/lang/vi';
+import RepostPost from "./ReportPost";
 timeago.register('vi', vi);
-
 
 // import { useInView } from 'react-intersection-observer';
 
 function PostCard({ post,
   posts,
   setPost
-  })
-  
-  
-  {
+  }){
   const userId = JSON.parse(localStorage.getItem("userId"));
   const [limit, setLimit] = useState(0);
   const [isliked, setIsLiked] = useState(post?.like?.includes(userId));
@@ -34,11 +32,54 @@ function PostCard({ post,
   const [postOptions,setPostOptions]=useState(false)
   const [editOpen,setEditOpen]=useState(false)
   const [deleteOpen,setDeleteOpen]=useState(false)
+  const [profileImage,setProfileImage]=useState(defaultProfilePicUrl)
+
+
+  const socket =useRef()
+  useEffect(()=>{
  
+    
+    socket.current=io('ws://localhost:8900')
+    
+    socket.current.emit("addUser",userId)
+    
+    //     const senderId="6442b9959e441b08eac6cf75"
+    
+    //     const receiverId="6442ba049e441b08eac6cf95"
+    
+    //     const data={senderId,receiverId}
+
+    // socket.current.emit("sendPost",data)
+    
+
+},[])
+
+
+  // -----------report----------------state------------
+
+  const [reportOpen ,setReportOpen] =useState(false)
+
+
+// -----------report----------------state------------
 
   const navigate =useNavigate()
 
-  console.log(post);
+  useEffect(() => {
+    const getPostUser = async () => {
+      const user = await axios.post("http://localhost:8800/api/users/getuser", {
+        userId: post.userId,
+      });
+    if(!user?.data?.profilePicture){
+      console.log("");
+      
+    }else{
+      setProfileImage(user?.data?.profilePicture)
+    }
+    };
+
+    getPostUser();
+  }, []);
+
 
 
   const {_id}=post
@@ -51,8 +92,8 @@ function PostCard({ post,
   },[userId])
   
   useEffect(() => {
-    setIsLiked(post.like.includes(userId) ? true : false);
-    setLike(post.like.length);
+    setIsLiked(post?.like?.includes(userId) ? true : false);
+    setLike(post?.like?.length);
    
   }, [post, userId]);
   
@@ -61,10 +102,6 @@ function PostCard({ post,
   setCommentLenght(commentLength+1)
 
  }
-
-
-
-
 
   const likeHandler = (postId) => {
     axios
@@ -76,11 +113,14 @@ function PostCard({ post,
         const likeCount = data.data.count;
         setLike(likeCount);
       });
+      const Obj=post
+      Obj.likerId=userId
+      axios.post("http://localhost:8800/api/notification/likepost",Obj).then((data)=>{
+        console.log(data);
+      })
   };
 
   const  deletPost=async() =>{
-
-
     try {
         axios.delete(`http://localhost:8800/api/users/deletepost/${_id}`).then((data)=>{
          
@@ -116,6 +156,21 @@ function PostCard({ post,
   return (
    
       <Card >
+
+        {/* ----------------------------------------reportModal------------------------ */}
+        <Modal 
+         onClose={() => { 
+          setReportOpen(false)
+          setMore(false)
+        
+          }}
+        open={reportOpen} >
+          <div className="w-40 h-fit">
+         <RepostPost setReportOpen={setReportOpen} setMore={ setMore} postUser={post.userName} postId={post._id}/>
+
+          </div>
+       </Modal>
+
         <Modal 
          onClose={() => { 
           setEditOpen(false)
@@ -181,21 +236,24 @@ function PostCard({ post,
                     
                   </div>
                   ):
-                  <div className="w-full p-1 flex justify-center content-center drop-shadow-2xl rounded-md border-2 cursor-default hover:bg-blue-200">Report post</div>}
+                  <div onClick={()=> setReportOpen(true)}
+                  className="w-full p-1 flex justify-center content-center drop-shadow-2xl
+                   rounded-md border-2 cursor-default hover:bg-blue-200">Report post</div>}
                 {/* </div> */}
                 
-                </div>
+                </div> 
                 }
                  {/* -----------------------------------------more options------------------------------------------- */}
-              <div className="w-12 h-12 mr-4 overflow-hidden rounded-full ">
+              <div className="w-12 h-12 mr-4 overflow-hidden rounded-full "> 
                 <img
-                  src="https://via.placeholder.com/150"
+                  src={profileImage}
                   alt="Profile"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="">
-                <div className="text-lg font-medium">John Doe<span className="text-sm ml-4 text-gray-600">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
+                <div className="text-lg font-medium">
+                  {post.userName}<span className="text-sm ml-4 text-gray-600">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
                 <div className="text-sm text-gray-500">
                 <TimeAgo
   datetime={post?.updatedAt}

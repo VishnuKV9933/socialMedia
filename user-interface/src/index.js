@@ -24,6 +24,7 @@ import storage from 'redux-persist/lib/storage';
 import { PersistGate } from 'redux-persist/integration/react';
 import User from './Context/UserContext';
 import ProflePicContext from './Context/ProflePicContext';
+import CurrentChatContext from './Context/ChatContext';
 
 const persistConfig = { key: "root", storage, version: 1, blacklist: ['chats', 'currentChat', 'messages', 'loading']};
 const persistedReducer = persistReducer(persistConfig, authReducer)
@@ -40,7 +41,7 @@ const store = configureStore({
 
 
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root')); 
 root.render(
     <React.StrictMode>
         <ProfileContext>
@@ -52,7 +53,12 @@ root.render(
             
           <User>
             <ProflePicContext>
+           <CurrentChatContext>
+
          <App/>
+           </CurrentChatContext>
+
+           
 
             </ProflePicContext>
           </User>

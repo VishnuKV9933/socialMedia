@@ -9,9 +9,9 @@ const CommendSchema =new Schema({
     userName:{
         type:String,
         required:true
-    },
+    }, 
     postId:{
-        type:ObjectId,
+        type:ObjectId, 
         required:true
     },
     comment:{
@@ -19,7 +19,7 @@ const CommendSchema =new Schema({
         requied:true
     },
     reply:{
-        type:Array
+        type:Array 
     }
 },
 {timestamps:true}

@@ -1,13 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate,useParams } from "react-router-dom";
+import React, { useEffect, useState,useContext } from "react";
+import { NavLink, useNavigate,useParams } from "react-router-dom";
 import { CiLocationOn } from "react-icons/ci";
 import { TbSchool } from "react-icons/tb";
 import axios from "axios";
 import PostCard from "../Components/PostCard";
 import "../Icons/input.css";
 import { defaultProfilePicUrl, fileSelector } from "../Utility/utility";
-
+import { ChatContext } from "../Context/ChatContext";
 const PeopleProfile = () => {
+  const userId = JSON.parse(localStorage.getItem("userId"));
+  let { id } = useParams()
+
+  const {setCurrentChat}= useContext(ChatContext)
+  const nweConversation={
+    members:[id,userId],
+    createdAt: Date.now()
+  }
+
+ 
+
   const [profile, setProfile] = useState(null);
   const [followersCount, setFollowersCount] = useState(null);
   const [followingCount, setFollowingCount] = useState(null);
@@ -31,7 +42,7 @@ const PeopleProfile = () => {
     useState(null);
 
 
-  let { id } = useParams()
+  
   const selectFile = fileSelector(setfile, setProfilePicturePreviewUrl);
 
   useEffect(() => {
@@ -98,7 +109,10 @@ const PeopleProfile = () => {
     getPost();
   }, [id]);
 
-
+  const sendMessage=()=>{
+    setCurrentChat(nweConversation)
+    navigate('/chat')
+  }
 
 
 
@@ -201,7 +215,7 @@ const PeopleProfile = () => {
 
               <div className="absolute top-4 right-8 ">
                 <button
-                  
+                  onClick={()=>{sendMessage()}}
                   className="border-2 rounded-full border-blue-600  text-blue-600 font-serif text-ssm p-1 
                   hover:bg-blue-600 hover:text-white hover:font-semibold"
                 >

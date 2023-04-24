@@ -19,6 +19,12 @@ function Suggestion({suggestion,user,suggestionFunction}) {
     axios.patch(`http://localhost:8800/api/users/follow/${userId}/${suggestion?._id}`).then((res)=>{
       setFollowState(!followState)
       suggestionFunction()
+
+
+      axios.post("http://localhost:8800/api/notification/follow",{userId,followingId:suggestion._id}).then((data)=>{
+        console.log(data);
+      })
+
     })
   } catch (error) {
     console.log(error);

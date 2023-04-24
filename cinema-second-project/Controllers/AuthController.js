@@ -24,6 +24,10 @@ const handleErr = (err) => {
   } else if (err.message === "wrong pasword") {
     errors.password = "wrong pasword";
     return errors;
+  } 
+   else if (err.message === "You are blocked by admin") {
+    errors.block = "You are blocked by admin";
+    return errors;
   } else if (err.message.includes("Users validation failed")) {
     console.log(err);
     Object.values(err.errors).forEach(({ properties }) => {
@@ -102,25 +106,37 @@ const userLogin = async (req, res) => {
       const validpassword = await bcrypt.compare(
         req.body.password,
         user.password
-      );
+      ); 
 
       if (!validpassword) {
         console.log("-----------------5----------------------");
 
         throw new Error("wrong pasword");
       }
-
+ 
       if (validpassword) {
-        console.log("-----------------6----------------------");
 
-        const token = createToken(user._id);
-        res.cookie("jwt", token, {
-          withCredentials: true,
-          httpOnly: false,
-          maxAge: maxAge * 10000,
-        });
 
-        res.status(200).json(user);
+
+        if(!user.block){
+
+          const token = createToken(user._id);
+          res.cookie("jwt", token, {
+            withCredentials: true,
+            httpOnly: false,
+            maxAge: maxAge * 10000,
+          });
+  
+          console.log(token);
+  
+          res.status(200).json(user);
+        }else{
+          
+          throw new Error("You are blocked by admin");
+
+        }
+
+
       }
     }
   } catch (err) {
@@ -199,6 +215,7 @@ const otpVerify=async(req,res)=>{
 if(!user){
 
   res.json({user:false})
+
 }
 else{
 

@@ -1,11 +1,13 @@
 /* eslint-disable no-restricted-globals */
-import React, { useState,useRef  } from "react";
+import React, { useState,useRef, useEffect  } from "react";
 import Card2 from "./Card2";
 import { FcPhotoReel } from "react-icons/fc";
 import { HiOutlineTrash } from "react-icons/hi2";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import ShareButton from "./SharaButton";
+import {io} from 'socket.io-client'
+
 // import { useDispatch, useSelector } from "react-redux";/redux
 // import { setPosts } from "../redux/store";
 
@@ -16,11 +18,22 @@ function PostFormCard2({postAlert,
   // redux
   // const dispatch = useDispatch()
   // const posts = useSelector(state=> state.posts)
+  const socket =useRef()
+
   const [description, setDescription] = useState("");
   const [file, setfile] = useState(null);
   const textareaRef = useRef(null);
   const [cookies] = useCookies([]);
  
+  useEffect(()=>{
+ 
+    const userId = JSON.parse(localStorage.getItem("userId"));
+
+    socket.current=io('ws://localhost:8900')
+
+    socket.current.emit("addUser",userId)
+
+},[])
 
   function handleChange(event) {
     setDescription(event.target.value);
@@ -65,6 +78,21 @@ function PostFormCard2({postAlert,
        setfile(null)
        postAlert()
        textareaRef.current.value='';
+console.log("ddddddddddddddddddddddddddddddddddddddd");
+
+        
+const senderId="6442b9959e441b08eac6cf75"
+    
+const receiverId="6442ba049e441b08eac6cf95"
+
+const notice={senderId,receiverId}
+
+socket.current.emit("sendPost",notice)
+
+   axios.post("http://localhost:8800/api/notification/post",data.data).then((data)=>{
+        console.log(data);
+      })
+
       })
       .catch((e) => {
         console.log(e);
@@ -129,7 +157,7 @@ function PostFormCard2({postAlert,
           </div>
          
           <HiOutlineTrash
-            className="w-72 h-72 items-center"
+            className="w-12 h-12 items-center"
             onClick={() => {
               setfile(null);
             }}

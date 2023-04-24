@@ -71,6 +71,14 @@ function ProfilePostCard({ post,
         const likeCount = data.data.count;
         setLike(likeCount);
       });
+
+
+      const Obj=post
+      Obj.likerId=userId
+      axios.post("http://localhost:8800/api/notification/likepost",Obj).then((data)=>{
+        console.log(data);
+      })
+
   };
 
   const  deletPost=async() =>{

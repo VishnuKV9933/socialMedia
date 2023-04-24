@@ -1,7 +1,7 @@
 // const { checkuser } = require("../Middlewares/AuthMiddlewares")
 const {userPostS3Upload,getPosts,likeUnlike,getuser,addComment,getCommets,addReplyComment,getReplyCommets,
     getUserPosts,hai,updateProfile,profilePictureUpdate,profilePictureRemove,suggestions,follow,unFollow,
-    search,editpost,deletePost,postUpdate,deleteComment,deleteReplyComment} =require("../Controllers/UserController")
+    search,editpost,deletePost,postUpdate,deleteComment,deleteReplyComment,getfriends} =require("../Controllers/UserController")
 
 const router =require("express").Router()
 
@@ -9,7 +9,7 @@ const {upload}=require('../otherFiles/multer')
 
 router.post("/userpost",upload.single('image'),userPostS3Upload)
 
-router.get("/getposts",getPosts)
+router.get("/getposts/:userId",getPosts)
 
 router.get("/getuserposts/id",hai)
 
@@ -50,6 +50,8 @@ router.delete("/deletepost/:id",deletePost)
 router.delete("/delete/:postId/comment/:id",deleteComment)
 
 router.delete("/deletereply/:commentId/comment/:id",deleteReplyComment)
+
+router.get("/getfriends/:id",getfriends)
 
 
 

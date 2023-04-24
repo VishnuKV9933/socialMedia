@@ -3,7 +3,7 @@ import React, { useState,useRef, useContext, useEffect } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import ReplyComment from "./ReplyComment";
 import { CommentContextSet } from "../Context/CommetContext";
-function Comment({ comment,postUserId,postId,setArrayLength,limit,commetnReducer}) {
+function Comment({ comment,postUserId,postId,setArrayLength,limit,commetnReducer,post}) {
 
 
   const textareaRef = useRef(null);
@@ -124,6 +124,17 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
       })
       .then((data) => {
         setReplyAllComments([data.data, ...allReplyComments]);
+
+
+       const Obj=post
+        Obj.commenderId=userId
+        Obj.commentOwner=comment.userId
+        Obj.reply=replyComment
+        axios.post("http://localhost:8800/api/notification/replycomment",Obj).then((data)=>{
+          console.log(data);
+        })
+
+
         setReplyComment("")
         setReplyCount(replyCount+1)
       });
@@ -132,14 +143,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
     console.log(error);
   }
 
-  const deleteReplyComment = ()=>{
-    console.log("deletereplsy");
 
-  }
-
-  const deleteReply=()=>{
-
-  }
 
   };
 

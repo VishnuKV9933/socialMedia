@@ -8,6 +8,10 @@ const PostSchema=new Schema({
         type:ObjectId,
         required:[true,"user id is required"]
     },
+    userName:{
+        type:String,
+        required:[true,"user name is required"]
+    },
     image:{
         type:String
     },
@@ -24,6 +28,9 @@ const PostSchema=new Schema({
         type:Array
     },
     updated:{
+        type:Boolean,
+        default:false
+    }, blocked:{
         type:Boolean,
         default:false
     }

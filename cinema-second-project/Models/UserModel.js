@@ -49,7 +49,15 @@ const userSchema = new mongoose.Schema({
         type:Array,
         default:[]
     },
+    reportedPost:{
+        type:Array,
+        default:[]
+    },
     isadmin:{
+        type:Boolean,
+        default:false
+    },
+    block:{
         type:Boolean,
         default:false
     },

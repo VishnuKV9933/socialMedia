@@ -17,6 +17,7 @@ function CommendModal({
   setCommentLenght
 }) {
   const MAX_HEIGHT = 100;
+  const userId = JSON.parse(localStorage.getItem("userId"));
 
   const OVERLAY_STYLE={
     top:5,
@@ -113,10 +114,22 @@ function CommendModal({
           console.log("--------------jjjjjjjjjjjj----------");
          
         });
+
+        const Obj=post
+        Obj.commenderId=userId
+        Obj.comment=comment
+        axios.post("http://localhost:8800/api/notification/commentpost",Obj).then((data)=>{
+          console.log(data);
+        })
+
       textareaRef.current.value = "";
       textareaRef.current.style.height = "auto";
       setComment("");
       commentHandler()
+
+     
+
+
     }
   };
 
@@ -200,6 +213,7 @@ function CommendModal({
                 setArrayLength={setArrayLength}
                 limit={limit}
                 commetnReducer={commetnReducer}
+                post={post}
               />
             );
           })}

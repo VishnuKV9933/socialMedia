@@ -6,6 +6,10 @@ const morgon = require("morgan")
 const dotenv =require("dotenv")
 const userRouter=require("./Routes/users")
 const authRouter=require("./Routes/auth")
+const conversationRouter=require("./Routes/converstion")
+const message=require("./Routes/message")
+const admin = require("./Routes/admin")
+const notification = require("./Routes/notification")
 const cors = require('cors')
 const cookieParser =require("cookie-parser")
 mongoose.set('strictQuery', true); 
@@ -31,6 +35,11 @@ app.use(cors({
 
 app.use("/api/users",userRouter)
 app.use("/api/auth",authRouter)
+app.use("/api/conversation",conversationRouter)
+app.use("/api/message",message)
+app.use("/api/admin",admin)
+app.use("/api/notification",notification)
+
 
 
 

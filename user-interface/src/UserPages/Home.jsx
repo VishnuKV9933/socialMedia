@@ -17,12 +17,15 @@ function Home() {
   const [posts, setPost] = useState([]);
   const navigate = useNavigate();
   const userId = JSON.parse(localStorage.getItem("userId"));
-
-  useEffect(() => {
-    if (!userId) {
-      navigate("/");
-    }
-  }, []);
+  console.log("home");
+  // useEffect(() => {
+  //   if (!userId) {
+  //     console.log("navigete home");
+  //     navigate("/userlogin");
+  //   }else{
+     
+  //   }
+  // }, []);
 
   useEffect(() => {
     const getUser = async () => {
@@ -39,7 +42,7 @@ function Home() {
   useEffect(() => {
     axios
       .get(
-        "http://localhost:8800/api/users/getposts"
+        `http://localhost:8800/api/users/getposts/${userId}`
         // {cancelToken: source1.token}
       )
       .then((data) => {
@@ -55,7 +58,7 @@ function Home() {
   }, []);
 
 const postAlert = () => {
-axios.get(`http://localhost:8800/api/users/getposts`).then((data) => {
+axios.get(`http://localhost:8800/api/users/getposts/${userId}`).then((data) => {
   console.log("post alert");
   // impoerting from store and adding to state
   // redux

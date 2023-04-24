@@ -11,27 +11,35 @@ import { useCookies } from "react-cookie";
 
 const UserLogin = () => {
 
+
   const navigate=useNavigate()
 
 
+
   const userId = JSON.parse(localStorage.getItem('userId'));
-  // if(userId){
-  //   navigate('/')
-  // }else{
-  //   navigate('/userlogin')
-  // }
+ 
 
   useEffect(()=>{
-    if(userId){
-      navigate('/')
+    if(!userId){
+      console.log("pleselogin");
+    }else{
+      
+      console.log("navigate useeffect");
+
+      // navigate('/chat')
     }
   },[])
+
+  if(userId) navigate('/')
+
 
   const [cookies, removeCookie] = useCookies([]);
   const { setProfile } = useContext(ProfileDetailsContext);
 
 
   console.log("user login react");
+
+
  const generateError =(err) =>{
   console.log("tost");
   toast.error(err,{
@@ -43,8 +51,10 @@ const UserLogin = () => {
     handleSubmit,
     formState: { errors }
   } = useForm();
+
   const onSubmit = async (datas) => {
     try {
+      console.log("000000000000000");
       const  { data }  = await axios.post(
         "http://localhost:8800/api/auth/userlogin",
         { ...datas },
@@ -57,11 +67,14 @@ console.log(data);
       if(data){
         if(data.errors){ 
           console.log(data.errors);
-          const {email,password} =data.errors;
+          const {email,password,block} =data.errors;
           if(email){ 
              generateError(email) }
           else if(password) {
             generateError(password)
+          }
+          else if(block) {
+            generateError(block)
           }
         }else{ 
           
@@ -76,6 +89,7 @@ console.log("-----1-----");
 
         navigate("/userLogin");
       } else {
+
         console.log("-----2-----");
 
         const { data } = await axios.post(
@@ -94,10 +108,18 @@ console.log("-----1-----");
           console.log("-----4-----");
 
           localStorage.setItem('userId', JSON.stringify(data.user._id));
+
           navigate("/")
+
+
+
+          console.log("-----------5---------------");
+
         }
       }
     };
+
+
     verifyUser();
  
 
@@ -112,6 +134,10 @@ console.log("-----1-----");
       console.log("data");
     }
     };
+
+
+
+
   return (
     <div>
         <div className="bg-gradient-to-tr from-fuchsia-500 to-sky-300">

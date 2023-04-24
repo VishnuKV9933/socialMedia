@@ -21,7 +21,6 @@ const {profilCardUrl,setProfileCardUrl} = useContext(ProfileCardUrlContext)
       const user = await axios.post("http://localhost:8800/api/users/getuser", {
         userId: userId,
       });
-      console.log("loy  out",user.data);
 
       setUser(user.data);
       setProfileCardName(user.data.username)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Modal from '../Components/Modal'
 import axios from 'axios'
-
+import { baseUrl } from '../Utility/utility';
 import ReportPostCard from './ReportPostCard'
 function ReportedPost({report,getReportedPost}) {
 
@@ -12,9 +12,9 @@ function ReportedPost({report,getReportedPost}) {
 
 
     const getPost=async()=>{
-     const res=await   axios.get(`http://localhost:8800/api/admin/getpost/${report?.postId}`)
-       
-       
+
+     const res=await   axios.get(`${baseUrl}/admin/getpost/${report?.postId}`)
+
         setPost(res.data)
     }
     useEffect(()=>{
@@ -22,7 +22,7 @@ function ReportedPost({report,getReportedPost}) {
     },[])
 
     const hidePost=async ()=>{
-      const res=await   axios.put(`http://localhost:8800/api/admin/hidepost/${report?.postId}`)
+      const res=await   axios.put(`${baseUrl}/admin/hidepost/${report?.postId}`)
 
       console.log("res.data",res.data);
       getReportedPost()

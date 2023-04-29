@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { defaultProfilePicUrl } from '../Utility/utility'
+import { defaultProfilePicUrl ,baseUrl} from '../Utility/utility'
 import axios from 'axios'
 import ChatOnlineFriends from './ChatOnlineFriends'
 
@@ -12,7 +12,7 @@ function ChatOnline({onlineUsers, currentId, setCurrentChat ,user,setCurrentChat
     const handleClick=async(user)=>{
 
       try {
-        const res =await axios.get(`http://localhost:8800/api/conversation/${currentId}/twouser/${user._id}`)
+        const res =await axios.get(`${baseUrl}/conversation/${currentId}/twouser/${user._id}`)
         setCurrentChat(res.data)
     } catch (error) {
       
@@ -20,7 +20,7 @@ function ChatOnline({onlineUsers, currentId, setCurrentChat ,user,setCurrentChat
 
     useEffect(()=>{
         const getFriends = async()=>{
-          const res=  await axios.get('http://localhost:8800/api/users/getfriends/'+currentId)
+          const res=  await axios.get(`${baseUrl}/users/getfriends/`+currentId)
           setFriends(res.data)
         }
         getFriends();
@@ -40,7 +40,7 @@ function ChatOnline({onlineUsers, currentId, setCurrentChat ,user,setCurrentChat
     <div onClick={()=>{
       handleClick(elem)
       const getUser = async () => {
-          const res = await axios.post("http://localhost:8800/api/users/getuser", {
+          const res = await axios.post(`${baseUrl}/users/getuser`, {
             userId: elem._id,
           }
           )

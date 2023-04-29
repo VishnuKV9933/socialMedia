@@ -1,17 +1,29 @@
 import axios from 'axios';
 import React from 'react'
+import { baseUrl } from '../Utility/utility';
 
-function ReportPost({setMore,setReportOpen,postId,postUser}) {
+function ReportPost({setMore,setReportOpen,postId,postUser,setPost}) {
     const userId = JSON.parse(localStorage.getItem('userId'));
 
     const reporter=async(reason)=>{
         console.log(reason);
 
-      const res=  await axios.post(`http://localhost:8800/api/admin/reportpost/`,{postId,userId,reason:reason,postUser})
+      const res=  await axios.post(`${baseUrl}/admin/reportpost/`,{postId,userId,reason:reason,postUser})
         setMore(false)
         setReportOpen(false)
+        postCaller()
     }
-
+    const postCaller =async () => {
+console.log("calling");
+     await axios.get(`${baseUrl}/users/getposts/${userId}`).then((data) => {
+       console.log("postcaller1",data);
+   
+          setPost(data.data.posts )
+        
+      });
+    };
+    
+ 
 
   return (
     <>

@@ -5,10 +5,10 @@ import { TbSchool } from "react-icons/tb";
 import axios from "axios";
 import Modal from "../Components/Modal";
 import "../Icons/input.css";
-import { defaultProfilePicUrl, fileSelector } from "../Utility/utility";
-import ProfilePostCard from "../Components/ProfilePostCard";
+import { baseUrl, defaultProfilePicUrl, fileSelector } from "../Utility/utility";
 import { UserContext } from "../Context/UserContext";
 import { ProfileCardUrlContext } from "../Context/ProflePicContext";
+import PostCard from "../Components/PostCard";
 const Profile = () => {
   const {setProfileCardName} =useContext(UserContext)
   const {setProfileCardUrl} =useContext(ProfileCardUrlContext)
@@ -20,7 +20,7 @@ const Profile = () => {
   const [isOpon, setIsOpen] = useState(false);
   const [profilePicOpen, SetProfilePicOpen] = useState(false);
   const [place, setPlace] = useState(null);
-  const [currentPlace, setCurrentPlace] = useState(null);
+  const [currentPlace, setCurrentPlace] = useState("location not added");
   const [school, setSchool] = useState(null);
   const [currentSchool, setCurrentSchool] = useState(null);
   const [bio, setBio] = useState(null);
@@ -28,12 +28,20 @@ const Profile = () => {
   const [name, setProfileUserName] = useState(null);
   const [currentName, setCurrentName] = useState(null);
   const navigate = useNavigate();
-
+// --------------------------------------------------------------------------------------------
   const [profilePictureUrl, setProfilePictureUrl] =
     useState(defaultProfilePicUrl);
   const [changeProfilepicButton, setChangeProfilepicButton] = useState(false);
   const [file, setfile] = useState(null);
   const [profilePicturePreviewUrl, setProfilePicturePreviewUrl] = useState(defaultProfilePicUrl);
+
+  const [following,setFollowing]=useState([])
+
+  const  [followingOpen,setFollowingOpen]=useState(false) 
+
+  const [followers,setFollowers]=useState([])
+
+  const  [followersOpen,setFollowersOpen]=useState(false) 
 
   const userId = JSON.parse(localStorage.getItem("userId"));
 
@@ -51,7 +59,7 @@ const Profile = () => {
         navigate("/");
       }
       
-      const user = await axios.post("http://localhost:8800/api/users/getuser", {
+      const user = await axios.post(`${baseUrl}/users/getuser`, {
         userId: userId,
       });
       
@@ -99,13 +107,19 @@ const Profile = () => {
       name: name,
     };
     await axios
-      .put("http://localhost:8800/api/users/updateprofile", data)
+      .put(`${baseUrl}/users/updateprofile`, data)
       .then((res) => {
+
+        console.log("res.data:",res.data);
+
         if (res.data.update) {
           const { city, bio, school, username } = res.data;
         
           if (username) {
+            console.log(username);
             setProfileUserName(username);
+            console.log(setProfileUserName);
+            
            setProfileCardName(username)
            
            
@@ -118,8 +132,9 @@ const Profile = () => {
             setProfileCardName(currentName)
          
            
-          }
+          } 
           if (city) {
+            console.log("city",city);
             setPlace(city);
             setCurrentPlace(city);
           } else {
@@ -147,12 +162,12 @@ const Profile = () => {
 
     setIsOpen(false);
   };
-
+console.log("currentPlace",currentPlace);
   useEffect(() => {
     const getPost = async () => {
       try {
         axios
-          .get(`http://localhost:8800/api/users/userpost/${userId}`)
+          .get(`${baseUrl}/users/userpost/${userId}`)
           .then((data) => {
             setPosts(data.data.posts);
           })
@@ -171,7 +186,7 @@ const Profile = () => {
     try {
       if (profilePictureUrl !== defaultProfilePicUrl) {
         axios
-          .put(`http://localhost:8800/api/users/removeprofilpicture/${userId}`)
+          .put(`${baseUrl}/users/removeprofilpicture/${userId}`)
           .then((res) => {
             setProfilePictureUrl(defaultProfilePicUrl);
             setProfileCardUrl(defaultProfilePicUrl)
@@ -193,7 +208,7 @@ const Profile = () => {
 
     axios
       .post(
-        `http://localhost:8800/api/users/profilpictureupdate/${userId}`,
+        `${baseUrl}/users/profilpictureupdate/${userId}`,
         data,
         {
           headers: { ContentType: "multipart/form-data" },
@@ -214,12 +229,67 @@ const Profile = () => {
 
   };
 
+  useEffect(()=>{
+   const getFollowers=async()=>{
 
- 
+     const res=await axios.get(`${baseUrl}/users/getfollowers/${userId}`)
+
+     const response=await axios.get(`${baseUrl}/users/getfollowing/${userId}`)
+
+     setFollowers(res.data)
+
+     setFollowing(response.data)
+
+   }
+
+   getFollowers()
+  },[])
+
 
   return (
     <div className="w-full ">
       {/* ---------------------------------edit details----------------------------------- */}
+
+      <Modal
+        id="editDetails"
+        onClose={() => {
+          setFollowersOpen(false)
+        }}
+        open={followersOpen}
+      >
+  <div className="w-48 h-48 overflow-y-scroll text-zinc-600 bg-blue-200">
+              <div className="font-semibold text-zinc-900 flex w-full justify-center">
+              Followers
+
+</div>
+  {followers.map((elem)=>{
+    return <div key={elem?._id}>
+    <div  className="font-medium text-sm ml-3 mb-2">{elem.username}</div>
+    </div>
+  })}
+</div>
+      </Modal>
+
+      <Modal
+        id="editDetails"
+        onClose={() => {
+          setFollowingOpen(false)
+        }}
+        open={followingOpen}
+      >
+  <div className="w-48 h-48 overflow-y-scroll text-zinc-600 bg-blue-200">
+              <div className="font-semibold text-zinc-900 flex w-full justify-center">
+              Following
+
+</div>
+  {following.map((elem)=>{
+    return <div key={elem._id}> 
+    <div  className="font-medium text-sm ml-3 mb-2">{elem.username}</div>
+    </div>
+  })}
+</div>
+      </Modal>
+
       <Modal
         id="editDetails"
         onClose={() => {
@@ -429,27 +499,34 @@ dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center
                     </div>
                     <div className="text-sm flex">
                       <CiLocationOn className="mt-1" />
-                      {profile
-                        ? profile.city
-                          ? currentPlace
-                          : "Location not added"
-                        : ""}
+                      {
+                       
+                           currentPlace?currentPlace:
+                           "Location not added"
+                      
+                       }
                     </div>
                     <div className="text-sm flex gap-1">
                       <TbSchool className="mt-1" />
-                      {profile
-                        ? profile.school
-                          ? currentSchool
+                      {
+                    
+                           currentSchool?currentSchool
                           : "School not added"
-                        : ""}
+              }
                     </div>
                   </div>
                   <div className=" w-full h-14  flex justify-center gap-4 mt-4 ">
-                    <followers className="flex-col justify-center items-center   p-1">
-                      <div className="font-serif text-ssm">Followers</div>
+                    <followers className="flex-col justify-center items-center cursor-pointer   p-1">
+                      <div onClick={()=>{
+                        setFollowersOpen(true)
+                      }} className="font-serif text-ssm">Followers</div>
                       <div className="font-serif ">{followersCount}</div>
                     </followers>
-                    <following className="flex-col justify-center items-center  p-1">
+                    <following 
+                    onClick={()=>{
+                      setFollowingOpen(true)
+                    }}
+                    className="flex-col justify-center items-center cursor-pointer p-1">
                       <div className="font-serif text-ssm">Following</div>
                       <div className="font-serif ml-3">{followingCount}</div>
                     </following>
@@ -461,12 +538,12 @@ dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center
                 </div>
               </div>
 
-              <div className="absolute top-4 right-8 ">
+              <div className="absolute top-4 right-8 transition-all">
                 <button
                   onClick={() => {
                     setIsOpen(true);
                   }}
-                  className="border-2 rounded-full border-blue-600  text-blue-600 font-serif text-ssm p-1 hover:bg-blue-600 hover:text-white hover:font-semibold"
+                  className="border-2  rounded-full border-blue-600  text-blue-600 font-serif text-ssm p-1 hover:bg-blue-600 hover:text-white hover:font-semibold transition-all"
                 >
                   Edit details
                 </button>
@@ -474,7 +551,7 @@ dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center
 
               <div className="ml-10 font-serif text-sm">Bio</div>
               <div className="text-ssm px-8 py-2 ">
-                {profile ? (profile.bio ? currentBio : "Bio not added") : ""}
+                {  currentBio?currentBio : "Bio not added"}
               </div>
             </div>
             {/* ----------------------------------------------------------profiledetails---------------------------------------------------------------- */}
@@ -485,7 +562,7 @@ dark:focus:ring-blue-800 font-medium rounded-lg text-sm text-center
 
           <div className="">
             {posts.map((post) => {
-              return <ProfilePostCard key={post._id} setPosts={setPosts} post={post} />;
+              return <PostCard key={post._id} setPosts={setPosts} post={post} />;
             })}
           </div>
 

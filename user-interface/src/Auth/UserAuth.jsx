@@ -3,6 +3,7 @@ import React, { useContext, useEffect } from 'react'
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { UserDetailsContext } from "../Context/UserContext";
+import { baseUrl } from '../Utility/utility';
 function UserAuth({childern}) {
     const navigate = useNavigate();
     const [cookies, removeCookie] = useCookies([]);
@@ -13,7 +14,7 @@ function UserAuth({childern}) {
             navigate("/userLogin");
           } else {
             const { data } = await axios.post(
-              "http://localhost:8800/api/auth",
+              `${baseUrl}/auth`,
               {},
               {
                 withCredentials: true,

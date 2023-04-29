@@ -38,15 +38,15 @@ io.on("connection",(socket) => {
    })
 // ---------------------------------------------------------
 
-const getUsers=(usersArray)=>{
+// const getUsers=(usersArray)=>{
 
-  const array =usersArray.map((elem)=>{
-    return users.find((user) => user.userId == elem);
-  })
+//   const array =usersArray.map((elem)=>{
+//     return users.find((user) => user.userId == elem);
+//   })
 
-  return array
-
-}
+//   return array
+  
+// }
 // ---------------------------------------------------------
 //send and getMessage
 socket.on('sendMessage',({senderId,receiverId,text}) => { 
@@ -60,24 +60,24 @@ socket.on('sendMessage',({senderId,receiverId,text}) => {
   });
 })
 // ---------------------------------------------------------
-socket.on('sendPost',({senderId,receiverId})=>{
-  const users = getUsers([senderId,receiverId])
-  console.log("userdfddf",users);
-  console.log("userdfddf");
+// socket.on('sendPost',({senderId,receiverId})=>{
+//   const users = getUsers([senderId,receiverId])
+//   console.log("userdfddf",users);
+//   console.log("userdfddf");
 
-  users?.forEach(user => {
-    if(!user){
-      console.log("ofline user");
-    }else{
-      console.log("heiiii");
-      const message="new notification"
-      io.to(user.socketId).emit("getNotice",message)
-    }
-  });
+//   users?.forEach(user => {
+//     if(!user){
+//       console.log("ofline user");
+//     }else{
+//       console.log("heiiii");
+//       const message="new notification"
+//       io.to(user.socketId).emit("getNotice",message)
+//     }
+//   });
 
-}) 
+// }) 
 
-socket.emit("toall","allcocked")
+// socket.emit("toall","allcocked")
 
 // --------------------------------------------------------------
    socket.on("disconnect",() => {

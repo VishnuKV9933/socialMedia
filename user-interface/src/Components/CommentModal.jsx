@@ -4,7 +4,7 @@ import Comment from "./Comment";
 import "simplebar/dist/simplebar.min.css";
 import SimpleBar from "simplebar-react";
 import { CommentContextSet } from "../Context/CommetContext";
-
+import { baseUrl } from "../Utility/utility";
 function CommendModal({
   isvisible,
   setOpen,
@@ -63,7 +63,7 @@ function CommendModal({
   useEffect(() => {
     const getComments = async () => {
       await axios
-        .post(`http://localhost:8800/api/users/getcomments`, {
+        .post(`${baseUrl}/users/getcomments`, {
           postId: commentIds.postId,
         })
         .then((data) => {
@@ -104,7 +104,7 @@ function CommendModal({
 
     if (comment.trim() !== "") {
       axios
-        .put("http://localhost:8800/api/users/addcomment", {
+        .put(`${baseUrl}/users/addcomment`, {
           userId: commentIds.userId,
           postId: commentIds.postId,
           comment: comment,
@@ -118,7 +118,7 @@ function CommendModal({
         const Obj=post
         Obj.commenderId=userId
         Obj.comment=comment
-        axios.post("http://localhost:8800/api/notification/commentpost",Obj).then((data)=>{
+        axios.post(`${baseUrl}/notification/commentpost`,Obj).then((data)=>{
           console.log(data);
         })
 

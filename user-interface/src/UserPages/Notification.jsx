@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
 import NotificationCard from '../Components/NotificationCard';
+import { baseUrl } from '../Utility/utility';
 
 function Notification() {
     const userId = JSON.parse(localStorage.getItem('userId'));
@@ -15,7 +16,7 @@ function Notification() {
 
     const getNotification=async()=>{
 
-       const res=await axios.get(`http://localhost:8800/api/notification/getnotification/${userId}`)
+       const res=await axios.get(`${baseUrl}/notification/getnotification/${userId}`)
 
        setNotification(res.data)
     
@@ -26,7 +27,7 @@ function Notification() {
    
 
   return (
-    <div className='bg-blue-100 w-ful h-screen overflow-hidden border-8 p-6 '>
+    <div className='bg-blue-100 w-ful h-screen overflow-hidden border-8 p-6 overflow-y-scroll'>
         <div className='font-bold text-2xl text-cyan-700 font-serif mb-10'>Notifications</div>
 
         {

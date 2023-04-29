@@ -4,7 +4,7 @@ import { FcPhotoReel } from "react-icons/fc";
 import { HiOutlineTrash } from "react-icons/hi2";
 import axios from "axios";
 import { useCookies } from "react-cookie";
-
+import { baseUrl } from "../Utility/utility";
 function EditPostProfile({postId ,setEditOpen,
   setPost,
    setMore}) {
@@ -33,7 +33,7 @@ let post=null
 
   const postCaller =async () => {
 
-   await axios.get(`http://localhost:8800/api/users/getposts`).then((data) => {
+   await axios.get(`${baseUrl}/users/getposts`).then((data) => {
      console.log("postcaller",data);
  
         setPost(data.data.posts )
@@ -42,7 +42,7 @@ let post=null
   };
 
     useEffect(()=>{
-        axios.get(`http://localhost:8800/api/users/editpost/${postId}`).then((data)=>{
+        axios.get(`${baseUrl}/users/editpost/${postId}`).then((data)=>{
             console.log("data",data.data);
             post=data.data;
             setDescription(post.description)
@@ -91,7 +91,7 @@ console.log('--------------1----------------');
     console.log('--------------9----------------');
 
     axios
-      .post("http://localhost:8800/api/users/postupdate", data, {
+      .post(`${baseUrl}/users/postupdate`, data, {
         headers: { ContentType: "multipart/form-data", jwt: jwt },
       })
       .then((data) => {

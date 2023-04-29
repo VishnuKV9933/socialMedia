@@ -9,8 +9,8 @@ import Modal from "./Modal";
 import EditPost from './EditPost'
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
-import {io} from 'socket.io-client'
-import { defaultProfilePicUrl } from "../Utility/utility";
+// import {io} from 'socket.io-client'
+import { defaultProfilePicUrl,baseUrl } from "../Utility/utility";
 // import it first.
 import vi from 'timeago.js/lib/lang/vi';
 import RepostPost from "./ReportPost";
@@ -33,26 +33,29 @@ function PostCard({ post,
   const [editOpen,setEditOpen]=useState(false)
   const [deleteOpen,setDeleteOpen]=useState(false)
   const [profileImage,setProfileImage]=useState(defaultProfilePicUrl)
+  const [postUser,setPostUser]=useState(null)
 
+  const [likedUser,setLikedUser]=useState([])
 
-  const socket =useRef()
-  useEffect(()=>{
+  const [likeOpen,setLikeOpen]=useState(false)
+//   const socket =useRef()
+//   useEffect(()=>{
  
     
-    socket.current=io('ws://localhost:8900')
+//     socket.current=io('ws://localhost:8900')
     
-    socket.current.emit("addUser",userId)
+//     socket.current.emit("addUser",userId)
     
-    //     const senderId="6442b9959e441b08eac6cf75"
+//         const senderId="6442b9959e441b08eac6cf75"
     
-    //     const receiverId="6442ba049e441b08eac6cf95"
+//         const receiverId="6442ba049e441b08eac6cf95"
     
-    //     const data={senderId,receiverId}
+//         const data={senderId,receiverId}
 
-    // socket.current.emit("sendPost",data)
+//     socket.current.emit("sendPost",data)
     
 
-},[])
+// },[])
 
 
   // -----------report----------------state------------
@@ -64,11 +67,14 @@ function PostCard({ post,
 
   const navigate =useNavigate()
 
+
+
   useEffect(() => {
     const getPostUser = async () => {
-      const user = await axios.post("http://localhost:8800/api/users/getuser", {
+      const user = await axios.post(`${baseUrl}/users/getuser`, {
         userId: post.userId,
       });
+      setPostUser(user.data)
     if(!user?.data?.profilePicture){
       console.log("");
       
@@ -105,7 +111,7 @@ function PostCard({ post,
 
   const likeHandler = (postId) => {
     axios
-      .put(`http://localhost:8800/api/users/like/${userId}/unlike`, {
+      .put(`${baseUrl}/users/like/${userId}/unlike`, {
         postId: postId,
       })
       .then((data) => {
@@ -115,19 +121,23 @@ function PostCard({ post,
       });
       const Obj=post
       Obj.likerId=userId
-      axios.post("http://localhost:8800/api/notification/likepost",Obj).then((data)=>{
+      axios.post(`${baseUrl}/notification/likepost`,Obj).then((data)=>{
         console.log(data);
       })
   };
 
   const  deletPost=async() =>{
     try {
-        axios.delete(`http://localhost:8800/api/users/deletepost/${_id}`).then((data)=>{
+        axios.delete(`${baseUrl}/users/deletepost/${_id}`).then((data)=>{
          
-    axios.get(`http://localhost:8800/api/users/getposts`).then((data) => {
- 
+          console.log("delete",data.data);
+     
+    axios.get(`${baseUrl}/users/getposts/${userId}`).then((data) => {
+      console.log("yes");
     setPost(data.data.posts);
-  });
+  })
+  .catch((data)=>console.log(data))
+  ;
         } )
       setDeleteOpen(false)
       setMore(false)
@@ -138,19 +148,27 @@ function PostCard({ post,
       
   }
   
-  // const goEditPost=()=>{
-  //   navigate(`/editpost/${_id}`)
-  // }
+  useEffect(()=>{
+
+    const likedUsers=async()=>{
+      
+      const res =await axios.get(`${baseUrl}/users/getlikedpeople/${post._id}`)
+      console.log("likedUser:",res);      
+      setLikedUser(res.data)
+    }
+    likedUsers()
+  },[])
   
   const postCaller =async () => {
 
-     axios.get(`http://localhost:8800/api/users/getposts`).then((data) => {
+     axios.get(`${baseUrl}/users/getposts/${userId}`).then((data) => {
       console.log("postcaller1",data);
   
          setPost(data.data.posts )
        
      });
    };
+   
 
 
   return (
@@ -166,7 +184,7 @@ function PostCard({ post,
           }}
         open={reportOpen} >
           <div className="w-40 h-fit">
-         <RepostPost setReportOpen={setReportOpen} setMore={ setMore} postUser={post.userName} postId={post._id}/>
+         <RepostPost setReportOpen={setReportOpen} setMore={ setMore} setPost={setPost} postUser={post.userName} postId={post._id}/>
 
           </div>
        </Modal>
@@ -201,8 +219,27 @@ function PostCard({ post,
             </div>
 
           </div>
-       </Modal>
+       </Modal> 
+       <Modal 
+         onClose={() => { 
+         setLikeOpen(false)
+          }}
+        open={likeOpen} >
 
+            <div className="w-48 h-24 text-zinc-600 bg-blue-200">
+              <div className="font-semibold text-zinc-900 flex w-full justify-center">
+              Liked People
+
+              </div>
+          {likedUser.map((elem)=>{
+            return <>
+            <div className="font-medium text-sm ml-3 mb-2 hover:font-semibold	">{elem.username}</div>
+
+            </>
+          })}
+          </div>
+         
+       </Modal>
         <div 
                       className="flex  bg-white rounded-lg overflow-hidden shadow-xl">
           <div   className=" p-4 w-full ">
@@ -236,15 +273,18 @@ function PostCard({ post,
                     
                   </div>
                   ):
-                  <div onClick={()=> setReportOpen(true)}
-                  className="w-full p-1 flex justify-center content-center drop-shadow-2xl
+                  <div onClick={()=>
+                     setReportOpen(true)
+                    
+                    }
+                  className="w-full p-1 flex justify-center content-center drop-shadow-2xl overflow-visible 
                    rounded-md border-2 cursor-default hover:bg-blue-200">Report post</div>}
                 {/* </div> */}
                 
                 </div> 
                 }
                  {/* -----------------------------------------more options------------------------------------------- */}
-              <div className="w-12 h-12 mr-4 overflow-hidden rounded-full "> 
+              <div className="w-12 h-12 mr-4 hover:w-14 hover:h-14 overflow-hidden rounded-full transition-all"> 
                 <img
                   src={profileImage}
                   alt="Profile"
@@ -252,8 +292,8 @@ function PostCard({ post,
                 />
               </div>
               <div className="">
-                <div className="text-lg font-medium">
-                  {post.userName}<span className="text-sm ml-4 text-gray-600">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
+                <div onClick={() => navigate(`/peopleprofile/${post?.userId}`)} className="text-lg font-medium hover:font-bold transition-all">
+                  {postUser?.username}<span className="text-sm ml-4 text-gray-600">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
                 <div className="text-sm text-gray-500">
                 <TimeAgo
   datetime={post?.updatedAt}
@@ -303,7 +343,8 @@ function PostCard({ post,
                     </svg>
                   )}
                 </div>
-                <div>{like} likes</div>
+                <div className="cursor-default" onClick={()=>{setLikeOpen(true)}}
+                >{like} likes</div>
               </div>
               <div className="flex items-center">
                 <div onClick={()=>{

@@ -7,8 +7,11 @@ import {io} from 'socket.io-client'
 import {BiArrowBack} from 'react-icons/bi'
 import ChatOnline from '../Components/ChatOnline';
 import { ChatContext } from '../Context/ChatContext';
-import { defaultProfilePicUrl } from '../Utility/utility';
+import { defaultProfilePicUrl,baseUrl } from '../Utility/utility';
 function Chat() {
+
+    console.log("------start------------------");
+
     const {currentChat,setCurrentChat} =useContext(ChatContext)
     const navigate=useNavigate()
     const userId = JSON.parse(localStorage.getItem("userId"));
@@ -25,8 +28,11 @@ function Chat() {
     const [newChat,setNewChat]=useState(false)
     const [currentChatFriend,setCurrentChatFriend]=useState('')
     const socket =useRef()
+    const [count,setCount]=useState(0)
 
     useEffect(() => {
+        console.log("------u1------------------");
+
       if (!userId) {
         navigate("/");
       }
@@ -34,7 +40,8 @@ function Chat() {
 
 
     useEffect(() => {
-       
+        console.log("------u2------------------");
+
     if(!currentChat){
 
     }else{
@@ -42,11 +49,11 @@ function Chat() {
 
 const getConversation=async()=>{
 
-    console.log("--------------------6----------------");
+    console.log("--------------------fungetconversation----------------");
 
             try {
          
-                const res =await axios.get(`http://localhost:8800/api/conversation/${currentChat.members[0]}/twouser/${currentChat.members[1]}`)
+                const res =await axios.get(`${baseUrl}/conversation/${currentChat.members[0]}/twouser/${currentChat.members[1]}`)
                 if(!res.data){
                     setNewChat(true)
                 }else{
@@ -69,6 +76,7 @@ getConversation()
 
     
     useEffect(()=>{
+        console.log("------u3------------------");
 
         socket.current=io('ws://localhost:8900')
 
@@ -83,16 +91,19 @@ getConversation()
     },[])
 
     useEffect(()=>{
+        console.log("------u4------------------");
+
         arrivalMessage&&
         currentChat?.members.includes(arrivalMessage.senderId)&&
         setMessages((prev)=> [...prev,arrivalMessage])
     },[arrivalMessage,currentChat])
 
     useEffect(() => {
+        console.log("------u5------------------");
 
       const getUser = async () => {
 
-        const res = await axios.post("http://localhost:8800/api/users/getuser", {
+        const res = await axios.post(`${baseUrl}/users/getuser`, {
           userId: userId,
         });
         setUser(res.data)
@@ -103,11 +114,11 @@ getConversation()
 
 
     useEffect(()=>{
-        console.log("--------------------4----------------");
+        console.log("--------------------u6----------------");
 
         const caller=async()=>{
 
-            const res = await axios.post("http://localhost:8800/api/users/getuser", {
+            const res = await axios.post(`${baseUrl}/users/getuser`, {
                 userId: userId,
               });
               setUser(res.data)
@@ -130,10 +141,11 @@ getConversation()
     
 
     useEffect(()=>{
+        console.log("------u7------------------");
 
         const getConversations=async ()=>{
             try {
-                const res =await axios.get('http://localhost:8800/api/conversation/'+userId)
+                const res =await axios.get(`${baseUrl}/conversation/`+userId)
                setConversations(res.data)
             } catch (error) {
                 console.log("1",error);
@@ -144,11 +156,11 @@ getConversation()
     },[userId])
    
     useEffect(()=>{
-        console.log("--------------------3----------------");
+        console.log("--------------------u8----------------");
 
         const getMessage=async ()=>{
             try {
-                const res =await axios.get('http://localhost:8800/api/message/'+currentChat?._id)
+                const res =await axios.get(`${baseUrl}/message/`+currentChat?._id)
                 setMessages(res.data)
             } catch (error) {
                console.log(error);
@@ -164,10 +176,10 @@ getConversation()
 
     const getConversations=async ()=>{
 
-        console.log("--------------------2----------------");
+        console.log("--------------------u9----------------");
 
         try {
-            const res =await axios.get('http://localhost:8800/api/conversation/'+userId)
+            const res =await axios.get(`${baseUrl}/conversation/`+userId)
            setConversations(res.data)
         } catch (error) {
             console.log("",error);
@@ -182,6 +194,9 @@ getConversation()
         if(newMessage.trim()!==''){
             if(!newChat){
     console.log("submit not new chat");
+            
+    setCount(count+1)
+
                 const message={
                     senderId:userId,
                     conversationId:currentChat._id,
@@ -198,7 +213,7 @@ getConversation()
                     text:newMessage
                 })
     
-                const res = await axios.post('http://localhost:8800/api/message/',message)
+                const res = await axios.post(`${baseUrl}/message/`,message)
 
                 console.log("message:",message);
                 console.log("res:",res.data);
@@ -211,7 +226,7 @@ getConversation()
         // new chat without converstaion registered
                     const [id,userId]=currentChat.members
 
-               const res=  await axios.post('http://localhost:8800/api/conversation/',{senderId:userId,receiverId:id})
+               const res=  await axios.post(`${baseUrl}/conversation/`,{senderId:userId,receiverId:id})
 
 
                const message={
@@ -226,7 +241,7 @@ getConversation()
                 text:newMessage
             })
 
-            const ress = await axios.post('http://localhost:8800/api/message/',message)
+            const ress = await axios.post(`${baseUrl}/message/`,message)
             setMessages([...messages,ress.data])
             setNewMessage('')
                 setNewChat(false)
@@ -236,6 +251,7 @@ getConversation()
 
     }
 console.log("newChat",newChat);
+console.log("count",count);
   return (
     <div className='w-full h-screen  border  mt-1 border-blue-200 rounded overflow-y-scroll'>
       
@@ -246,7 +262,7 @@ console.log("newChat",newChat);
          
 {onlineOpen?
 <>
-<div className='cursor-default mt-6 mb-6 text-xl font-bold text-cyan-700 hover:font-extrabold' onClick={()=>{setOnlineOpen(false)}}>Go to My chats</div>
+<div className='cursor-default mt-6 mb-6 text-xl font-bold text-cyan-700 transition ease-in-out delay-200  hover:-translate-y-1 hover:scale-100   duration-300 hover:font-extrabold' onClick={()=>{setOnlineOpen(false)}}>Go to My chats</div>
 <div className=''>
     <ChatOnline onlineUsers={onlineUsers} currentId={userId} setCurrentChatFriend={setCurrentChatFriend} setCurrentChat={setCurrentChat} user={user} />
 </div>
@@ -256,7 +272,7 @@ console.log("newChat",newChat);
         <>
           {/* ----------------------Conversations--------------------------- */}
 
-        <div className='cursor-default mt-6 mb-6 text-xl font-bold text-cyan-700 hover:font-extrabold ' onClick={()=>{setOnlineOpen(true)}}>Find online friends</div>
+        <div className='cursor-default mt-6 mb-6 text-xl font-bold text-cyan-700 transition ease-in-out delay-200  hover:-translate-y-1 hover:scale-100   duration-300  hover:font-extrabold ' onClick={()=>{setOnlineOpen(true)}}>Find online friends</div>
    {consversations.map((elem)=>{
     return <>
     <div onClick={()=>{

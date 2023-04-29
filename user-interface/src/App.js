@@ -1,8 +1,7 @@
 import './App.css';
-import {BrowserRouter,Routes,Route, Navigate} from "react-router-dom"
+import {BrowserRouter,Routes,Route, } from "react-router-dom"
 import UserLogin from './UserPages/UserLogin'
 import UserSignup from './UserPages/UserSignup'
-import Orm from './UserPages/Orm';
 import AdminPage from './AdminPages/AdminLogin';
 import Home from './UserPages/Home'
 
@@ -16,36 +15,36 @@ import PeopleProfile from './UserPages/PeopleProfile';
 import Chat from './UserPages/Chat';
 import AdminPost from './AdminPages/AdminPost';
 import Notification from './UserPages/Notification';
+import AdminDashBoard from './AdminPages/AdminDashBoard';
+import Protect from './Protect';
 
 
 
 function App() {
 
-  const userId = JSON.parse(localStorage.getItem('userId'));
-  console.log("app js");
+  
  
   return (
    <BrowserRouter>
    <Routes>
-   <Route element={userId?<LayOut/>:<Navigate to="userlogin"/>} >
-   <Route  path="/" element={userId?<Home/>:<Navigate to="userlogin"/>} />
-   <Route  path="/profile" element={userId?<Profile/>:<Navigate to="userlogin"/>} /> 
-   <Route  path="/peopleprofile/:id" element={userId?<PeopleProfile/>:<Navigate to="userlogin"/>} /> 
-   <Route  path="/chat" element={userId?<Chat/>:<Navigate to="userlogin"/>} /> 
-   <Route  path="/notification" element={userId?<Notification/>:<Navigate to="userlogin"/>} /> 
-   {/* <Route  path="/userlogin" element={userId?<Home/>:<UserLogin/>} /> */}
-
+   <Route element={<Protect/>} >
+   <Route element={<LayOut/>} >
+   <Route exact path="/" element={  <Home/> } />
+   <Route  path="/profile" element={<Profile/>} /> 
+   <Route  path="/peopleprofile/:id" element={<PeopleProfile/>} /> 
+   <Route  path="/chat" element={<Chat/>} /> 
+   <Route  path="/notification" element={<Notification/>} /> 
    </Route>
-   <Route  path="/orm" element={userId?<Orm/>:<Navigate to="userlogin"/>} />
+   </Route>
+
     <Route exact path="/usersignup" element={<UserSignup/>} />
     <Route exact path="/userlogin" element={<UserLogin/>} />
     <Route exact path="/userotplogin" element={<UserOtpLogin/>} />
     <Route exact path="/userotplogin" element={<UserOtpLogin/>} />
-    {/* <Route exact path="/layout" element={<LayOut/>} /> */}
-
     <Route exact path="/adminlogin" element={<AdminPage/>} /> 
-   <Route exact path="/adminhome" element={<AdminHomePage />} /> 
-   <Route exact path="/adminpostmangement" element={<AdminPost />} /> 
+    <Route exact path="/admindashboard" element={<AdminDashBoard />} /> 
+    <Route exact path="/adminhome" element={<AdminHomePage />} /> 
+    <Route exact path="/adminpostmangement" element={<AdminPost />} /> 
 
 
 
@@ -56,3 +55,22 @@ function App() {
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{/* <Route  path="/peopleprofile/:id" element={userId?<PeopleProfile/>:<Navigate to="userlogin"/>} />  */}

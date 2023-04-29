@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import User from './User'
-
+import { baseUrl } from '../Utility/utility';
 
 function UserMangement() {
 
@@ -16,7 +16,7 @@ function UserMangement() {
 
     const getUsers=async()=>{
         console.log("hai");
-        const res=   await axios.get(`http://localhost:8800/api/admin/getuser`)
+        const res=   await axios.get(`${baseUrl}/admin/getuser`)
         console.log("res.data");
         let count=1
         for(const user of res.data){

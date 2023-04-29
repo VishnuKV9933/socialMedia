@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { baseUrl } from "../Utility/utility";
 import PostFormCard from "../Components/PostFormCard";
 import PostCard from "../Components/PostCard";
 // import SearchCard from "../Components/RoundedCard";
@@ -29,7 +30,7 @@ function Home() {
 
   useEffect(() => {
     const getUser = async () => {
-      const user = await axios.post("http://localhost:8800/api/users/getuser", {
+      const user = await axios.post(`${baseUrl}/api/users/getuser`, {
         userId: userId,
       });
       dispatch(setUser({ user: user.data }));
@@ -42,7 +43,7 @@ function Home() {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:8800/api/users/getposts/${userId}`
+        `${baseUrl}/users/getposts/${userId}`
         // {cancelToken: source1.token}
       )
       .then((data) => {
@@ -58,7 +59,7 @@ function Home() {
   }, []);
 
 const postAlert = () => {
-axios.get(`http://localhost:8800/api/users/getposts/${userId}`).then((data) => {
+axios.get(`${baseUrl}/users/getposts/${userId}`).then((data) => {
   console.log("post alert");
   // impoerting from store and adding to state
   // redux

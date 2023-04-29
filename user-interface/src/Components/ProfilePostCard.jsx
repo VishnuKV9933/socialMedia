@@ -7,7 +7,7 @@ import {GrFormClose} from 'react-icons/gr'
 import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import EditPost from './EditPost'
-
+import { baseUrl } from "../Utility/utility";
 import TimeAgo from 'timeago-react';
 import * as timeago from 'timeago.js';
 
@@ -20,8 +20,6 @@ function ProfilePostCard({ post,
   posts,
   setPosts
   }) {
-
-
 
   const userId = JSON.parse(localStorage.getItem("userId"));
   const [limit, setLimit] = useState(0);
@@ -63,7 +61,7 @@ function ProfilePostCard({ post,
 
   const likeHandler = (postId) => {
     axios
-      .put(`http://localhost:8800/api/users/like/${userId}/unlike`, {
+      .put(`${baseUrl}/users/like/${userId}/unlike`, {
         postId: postId,
       })
       .then((data) => {
@@ -75,7 +73,7 @@ function ProfilePostCard({ post,
 
       const Obj=post
       Obj.likerId=userId
-      axios.post("http://localhost:8800/api/notification/likepost",Obj).then((data)=>{
+      axios.post(`${baseUrl}/notification/likepost`,Obj).then((data)=>{
         console.log(data);
       })
 
@@ -85,9 +83,9 @@ function ProfilePostCard({ post,
 
 
     try {
-        axios.delete(`http://localhost:8800/api/users/deletepost/${_id}`).then((data)=>{
+        axios.delete(`${baseUrl}/users/deletepost/${_id}`).then((data)=>{
          
-    axios.get(`http://localhost:8800/api/users/getposts`).then((data) => {
+    axios.get(`${baseUrl}/users/getposts`).then((data) => {
  
     setPosts(data.data.posts);
   });
@@ -108,7 +106,7 @@ function ProfilePostCard({ post,
   const postCaller =async () => {
 console.log("postcaller2");
   await  axios
-    .get(`http://localhost:8800/api/users/userpost/${userId}`)
+    .get(`${baseUrl}/users/userpost/${userId}`)
     .then((data) => {
         console.log(data.data.posts);
       setPosts(data.data.posts);

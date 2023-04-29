@@ -3,8 +3,11 @@ import { useForm } from "react-hook-form";
 import { Link,useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios"
+import { baseUrl } from "../Utility/utility";
+import { useCookies } from "react-cookie";
 
 export default function UserSignup() {
+  const [cookies, removeCookie] = useCookies([]);
 
     const navigate=useNavigate()
 
@@ -27,7 +30,7 @@ export default function UserSignup() {
        if(data){
     try {
         const  info  = await axios.post(
-          "http://localhost:8800/api/auth/usersignup",
+          `${baseUrl}/auth/usersignup`,
           { ...data },
           {
             withCredentials: true,
@@ -36,33 +39,54 @@ export default function UserSignup() {
 
         let datas=info.data
 
-        console.log("................1...................");
-        console.log(datas);
         if(datas){
-          console.log("................2...................");
           if(datas.errors){ 
-            console.log("................3...................");
             const {email,password} =datas.errors;
-            console.log("................4...................");
             if(email) {
-              console.log("................5...................");
               generateError(email)
             }
             else if(password){
-              console.log("................6...................");
               generateError(password)
-            }else{
-              console.log("................7...................");
-  
             }
-            console.log("................8...................");
           }else{
          
-             navigate("/userLogn")
-          }
-          console.log("/navigater");
+            const verifyUser = async () => {
+        
+              if (!cookies.jwt) {
+        
+                navigate("/userLogin");
+              } else {
+        
+        
+                const { data } = await axios.post(
+                  `${baseUrl}/auth`,
+                  {},
+                  {
+                    withCredentials: true,
+                  }
+                );
+                if (!data.status) {
+        
+                  removeCookie("jwt");
+                  navigate("/userLogin");
+                } else {
+        
+                 localStorage.setItem('userId', JSON.stringify(data.user._id))
+        
+                 
+                 navigate("/")
+                 
+                }
+                
+              }
+            };
+            
+        
+            verifyUser();
          
-          console.log("................9...................");
+        
+          }
+       
   
         }
       } catch (err) {

@@ -10,7 +10,6 @@ const message=async(req,res)=>{
     const message =new messageModel(req.body)
     try {
 
-        console.log(req.bod);
         
         const message = new messageModel({
             conversationId:mongoose.Types.ObjectId(req.body.conversationId),

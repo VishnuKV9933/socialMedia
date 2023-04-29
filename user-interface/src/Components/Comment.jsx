@@ -3,6 +3,7 @@ import React, { useState,useRef, useContext, useEffect } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import ReplyComment from "./ReplyComment";
 import { CommentContextSet } from "../Context/CommetContext";
+import { baseUrl } from "../Utility/utility";
 function Comment({ comment,postUserId,postId,setArrayLength,limit,commetnReducer,post}) {
 
 
@@ -42,7 +43,8 @@ function Comment({ comment,postUserId,postId,setArrayLength,limit,commetnReducer
   
   useEffect(()=>{
    const  getRplayComments=async()=>{ 
-const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/${comment._id}`)
+
+const data = await axios.get(`${baseUrl}/users/getreplycomments/${comment._id}`)
     
       setReplyCount(data.data.replyComments.length);
       const array = data.data.replyComments.slice(0, replyLimit * 3);
@@ -58,7 +60,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
   },[openReply,comment._id,replyLimit])
 
   const  getRplayComments=async()=>{ 
-    const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/${comment._id}`)
+    const data = await axios.get(`${baseUrl}/users/getreplycomments/${comment._id}`)
         
     
           setReplyCount(data.data.replyComments.length);
@@ -71,7 +73,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
 
   const getComments = async () => {
     await axios
-      .post(`http://localhost:8800/api/users/getcomments`, {
+      .post(`${baseUrl}/users/getcomments`, {
         postId:postId,
       })
       .then((data) => {
@@ -96,7 +98,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
 
   const commentDeleter=()=>{
 
-    axios.delete(`http://localhost:8800/api/users/delete/${postId}/comment/${comment._id}`).then(()=>{
+    axios.delete(`${baseUrl}/users/delete/${postId}/comment/${comment._id}`).then(()=>{
       getComments()
     })
 
@@ -104,7 +106,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
 
   const replyCommentDeleter=(reply)=>{
 
-    axios.delete(`http://localhost:8800/api/users/deletereply/${comment._id}/comment/${reply._id}`).then(()=>{
+    axios.delete(`${baseUrl}/users/deletereply/${comment._id}/comment/${reply._id}`).then(()=>{
       // getComments()
       getRplayComments()
     })
@@ -117,7 +119,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
     e.preventDefault();
     if (replyComment.trim() !== "") {
       axios
-      .put("http://localhost:8800/api/users/addreplycomments", {
+      .put(`${baseUrl}/users/addreplycomments`, {
         userId: userId,
         commentId:comment._id,
         reply:replyComment,
@@ -130,7 +132,7 @@ const data = await axios.get(`http://localhost:8800/api/users/getreplycomments/$
         Obj.commenderId=userId
         Obj.commentOwner=comment.userId
         Obj.reply=replyComment
-        axios.post("http://localhost:8800/api/notification/replycomment",Obj).then((data)=>{
+        axios.post(`${baseUrl}/notification/replycomment`,Obj).then((data)=>{
           console.log(data);
         })
 

@@ -15,6 +15,7 @@ const addPostNotification =async(req,res)=>{
             const data={
                 postId:mongoose.Types.ObjectId(req.body._id),
                 senderName:user.username,
+                senderId:mongoose.Types.ObjectId(user._id),
                 userId:mongoose.Types.ObjectId(follower),
                 message:"added a post",
             }
@@ -34,10 +35,18 @@ const addPostNotification =async(req,res)=>{
 
 
 const getNotification=async(req,res)=>{
-    const notifications=(await notificationModel.find({userId:mongoose.Types.ObjectId(req.params.id)}).limit(8)).reverse()
-    
 
-    res.status(200).json(notifications)
+    try {
+    
+        const notifications=(await notificationModel.find({userId:mongoose.Types.ObjectId(req.params.id)})).reverse()
+        
+    
+        res.status(200).json(notifications)
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+
 
 }
 
@@ -156,7 +165,6 @@ const follow=async(req,res)=>{
     const notification =  new notificationModel(data)
     const response=  await notification.save()
 
-    console.log(response);
 
     res.status(200).json({success:true})
 
@@ -172,14 +180,12 @@ const follow=async(req,res)=>{
 const read=async(req,res)=>{
 
 
-    console.log(req.params.id);
 
     try {
      
         const res=await notificationModel.updateOne({_id:mongoose.Types.ObjectId(req.params.id)},
         {readed:true})
 
-        console.log(res);
 
     res.json({success:true})
 

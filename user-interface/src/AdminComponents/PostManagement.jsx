@@ -1,13 +1,15 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import ReportedPost from './ReportedPost'
+import { baseUrl } from '../Utility/utility';
 
 function PostManagement() {
 
     const [reportedPost ,setReportedPost]=useState([])
 
     const getReportedPost=async()=>{
-        const res=   await axios.get(`http://localhost:8800/api/admin/getreportedposts`)
+        const res=   await axios.get(`${baseUrl}/admin/getreportedposts`)
+        console.log("getreported:",res.data);
         setReportedPost(res.data)
     }
     useEffect(()=>{

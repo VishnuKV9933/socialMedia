@@ -7,6 +7,7 @@ import Suggestion from "./Components/Suggestion";
 import axios from "axios";
 import { UserContext } from "./Context/UserContext";
 import { ProfileCardUrlContext } from "./Context/ProflePicContext";
+import { baseUrl, defaultProfilePicUrl } from "./Utility/utility";
 function LayOut() {
 const {profileCardName,setProfileCardName}=useContext(UserContext)
 const {profilCardUrl,setProfileCardUrl} = useContext(ProfileCardUrlContext)
@@ -18,13 +19,13 @@ const {profilCardUrl,setProfileCardUrl} = useContext(ProfileCardUrlContext)
 
   useEffect(() => {
     const getUser = async () => {
-      const user = await axios.post("http://localhost:8800/api/users/getuser", {
+      const user = await axios.post(`${baseUrl}/users/getuser`, {
         userId: userId,
       });
 
       setUser(user.data);
       setProfileCardName(user.data.username)
-      if(user?.data?.profilePicture) setProfileCardUrl(user.data.profilePicture)
+       setProfileCardUrl(user?.data?.profilePicture?user?.data?.profilePicture:defaultProfilePicUrl)
     };
 
     getUser();
@@ -33,7 +34,7 @@ const {profilCardUrl,setProfileCardUrl} = useContext(ProfileCardUrlContext)
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8800/api/users/getsuggestion/${userId}`)
+      .get(`${baseUrl}/users/getsuggestion/${userId}`)
       .then((res) => {
         setSuggestion(res.data.users);
       })
@@ -44,7 +45,7 @@ const {profilCardUrl,setProfileCardUrl} = useContext(ProfileCardUrlContext)
 
   const suggestionFunction = () => {
     axios
-      .get(`http://localhost:8800/api/users/getsuggestion/${userId}`)
+      .get(`${baseUrl}/users/getsuggestion/${userId}`)
       .then((res) => {
         setSuggestion(res.data.users);
       })

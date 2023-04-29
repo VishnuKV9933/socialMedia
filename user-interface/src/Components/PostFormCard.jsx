@@ -7,6 +7,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import ShareButton from "./SharaButton";
 import {io} from 'socket.io-client'
+import { baseUrl } from "../Utility/utility";
 
 // import { useDispatch, useSelector } from "react-redux";/redux
 // import { setPosts } from "../redux/store";
@@ -46,12 +47,25 @@ function PostFormCard2({postAlert,
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }}
 
+
+  const selectFile=(e)=>{
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setfile(e.target.files)
+    } else {
+      alert('Please select an image file');
+    }
+
+      
+  }
+
   const submit = (e) => {
     e.preventDefault();
     const data = new FormData();
     const jwt = cookies.jwt;
 
     if(file){
+      console.log("file:",file[0].type);
     }
     if(file&&description){
       data.append("image", file[0]);
@@ -65,7 +79,7 @@ function PostFormCard2({postAlert,
     }
 
     axios
-      .post("http://localhost:8800/api/users/userpost", data, {
+      .post(`${baseUrl}/users/userpost`, data, {
         headers: { ContentType: "multipart/form-data", jwt: jwt },
       })
       .then((data) => {
@@ -78,18 +92,17 @@ function PostFormCard2({postAlert,
        setfile(null)
        postAlert()
        textareaRef.current.value='';
-console.log("ddddddddddddddddddddddddddddddddddddddd");
 
         
-const senderId="6442b9959e441b08eac6cf75"
+// const senderId="6442b9959e441b08eac6cf75"
     
-const receiverId="6442ba049e441b08eac6cf95"
+// const receiverId="6442ba049e441b08eac6cf95"
 
-const notice={senderId,receiverId}
+// const notice={senderId,receiverId}
 
-socket.current.emit("sendPost",notice)
+// socket.current.emit("sendPost",notice)
 
-   axios.post("http://localhost:8800/api/notification/post",data.data).then((data)=>{
+   axios.post(`${baseUrl}/notification/post`,data.data).then((data)=>{
         console.log(data);
       })
 
@@ -124,17 +137,15 @@ socket.current.emit("sendPost",notice)
 
 
         <div id="photo&share" className="flex w-1/4 gap-2">
-          
-          <label className="flex justify-center h-10 items-center rounded-xl w-1/2 bg-indigo-200 hover:bg-indigo-500 border-solid">
+        {/* file[0].type!=="image/jpeg"||file[0].type!=="image/jpg"||file[0].type!=="image/jpg" */}
+          <label className="flex justify-center h-10 items-center rounded-xl w-1/2 hover:h-11  h:text-white  border-solid">
             <div id="photo">
               <input
-                onChange={(e) => {
-                  setfile(e.target.files);
-                  console.log(e.target.files);
-                }}
+                onChange= {selectFile }
                 className="hidden"
                 name="image"
                 type="File"
+                accept="image/*"
               />
               <FcPhotoReel className="w-8 h-8" />
             </div>

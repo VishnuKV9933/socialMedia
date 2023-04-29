@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import {  toast } from "react-toastify";
+import { baseUrl } from '../Utility/utility';
 
 import SideBar from "../AdminComponents/SideBar";
 import UserMangement from "../AdminComponents/UserMangement";
@@ -10,22 +11,20 @@ import UserMangement from "../AdminComponents/UserMangement";
 function AdminHomePage() {
   console.log("---------------------1---------------------");
   const navigate = useNavigate();
-  const [openPost, setOpenPost] = useState(true);
 
 
-  const [cookies, setCookies, removeCookie] = useCookies();
+  const [cookies, removeCookie] = useCookies();
 
 
   useEffect(() => {
     const verifyToken = async () => {
-      console.log("---------------------11---------------------");
       if (!cookies.adminjwt) {
         console.log("---------------------22---------------------");
         navigate("/adminlogin");
       } else {
         console.log("---------------------3---------------------");
         const { data } = await axios.post(
-          "http://localhost:8800/api/auth/checkadmin",
+          `${baseUrl}/auth/checkadmin`,
           {},
           { withCredentials: true }
         );
@@ -44,10 +43,7 @@ function AdminHomePage() {
     verifyToken();
   }, [cookies, navigate, removeCookie]);
 
-  const logout = () => {
-    removeCookie("adminjwt");
-    navigate("/adminlogin");
-  };
+ 
   return (
     <div className="grid  grid-cols-20 bg-blue-50 h-screen" >
 

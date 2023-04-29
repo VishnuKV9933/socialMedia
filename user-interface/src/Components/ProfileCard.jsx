@@ -12,7 +12,7 @@ function ProfileCard({name,url}) {
             />
           </div>
 
-          <div className='text-lg ml-3 font-bold font-serif'>{name}</div>
+          <div className='text-lg ml-3 font-bold font-serif hover:font-black hover:text-xl transition-all'>{name}</div>
         </div>
     </div>
   )

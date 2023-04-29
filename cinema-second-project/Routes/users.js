@@ -1,7 +1,8 @@
 // const { checkuser } = require("../Middlewares/AuthMiddlewares")
 const {userPostS3Upload,getPosts,likeUnlike,getuser,addComment,getCommets,addReplyComment,getReplyCommets,
     getUserPosts,hai,updateProfile,profilePictureUpdate,profilePictureRemove,suggestions,follow,unFollow,
-    search,editpost,deletePost,postUpdate,deleteComment,deleteReplyComment,getfriends} =require("../Controllers/UserController")
+    search,editpost,deletePost,postUpdate,deleteComment,deleteReplyComment,getfriends,getLikedUsers,
+    getFollowers,getFollowing} =require("../Controllers/UserController")
 
 const router =require("express").Router()
 
@@ -52,6 +53,15 @@ router.delete("/delete/:postId/comment/:id",deleteComment)
 router.delete("/deletereply/:commentId/comment/:id",deleteReplyComment)
 
 router.get("/getfriends/:id",getfriends)
+
+router.get("/getlikedpeople/:id",getLikedUsers)
+
+router.get("/getfollowers/:id",getFollowers)
+
+router.get("/getfollowing/:id",getFollowing)
+
+
+
 
 
 

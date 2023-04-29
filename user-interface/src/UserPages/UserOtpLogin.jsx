@@ -8,6 +8,7 @@ import { auth } from "../firebaseConfig";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { Link, useNavigate } from "react-router-dom";
+import { baseUrl } from "../Utility/utility";
 
 function UserOtpLogin() {
   const navigate = useNavigate();
@@ -93,7 +94,7 @@ function UserOtpLogin() {
       return null;
     } else {
       axios
-        .get(`http://localhost:8800/api/auth/otplogin/${phone.slice(3)}`)
+        .get(`${baseUrl}/auth/otplogin/${phone.slice(3)}`)
         .then((res) => {
           if (!res.data.user) {
             setLoading(false);
@@ -135,7 +136,7 @@ function UserOtpLogin() {
         setUser(res.user);
         setLoading(false);
         axios
-          .get(`http://localhost:8800/api/auth/otpverify/${phone.slice(3)}`)
+          .get(`${baseUrl}/auth/otpverify/${phone.slice(3)}`)
           .then((res) => {
             console.log(res);
             console.log("-------2----------");

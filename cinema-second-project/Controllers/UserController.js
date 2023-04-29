@@ -95,6 +95,7 @@ const userPostS3Upload = async (req, res) => {
     }
   } catch (err) { 
     console.log(err);
+    res.status(200).json(err)
   }
 };
 
@@ -103,10 +104,13 @@ const userPostS3Upload = async (req, res) => {
 const getPosts = async (req, res) => {
   try {
     const user =await UserModel.findById(req.params.userId)
+  
     const posts = await PostModel.find(
-      {$and:[
+      {$and:[{blocked:false},
         {_id:{$nin:user.reportedPost}},
-        {$or:[{userId:user._id}, {userId:{$in:user.following}},{blocked:false} ]}
+        {
+          $or:[{userId:user._id}, {userId:{$in:user.following}}
+         ]}
       ]
     }
       ); 
@@ -126,6 +130,7 @@ const getPosts = async (req, res) => {
     res.json({ posts: posts });
   } catch (error) {
     console.log(error);
+    res.status(500).json(error)
   }
 };
 
@@ -149,7 +154,7 @@ const getUserPosts = async (req, res) => {
     res.json({ posts: posts });
   } catch (error) {
     console.log(error);
-    res.send({});
+    res.status(500).json(error)
   }
 };
 
@@ -178,7 +183,6 @@ const getuser = async (req, res) => {
     const user = await UserModel.findById(req.body.userId);
 
     if (!user?.profilePicture) {
-      console.log("no profilePicture");
     }else{
       const getObjectParams = {
         Bucket: bucketName,
@@ -192,54 +196,83 @@ const getuser = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.log(error);
+    res.status(500).json(error)
   }
 };
 
 const addComment = async (req, res) => {
-  const post = await PostModel.findById(req.body.postId);
-  const user = await UserModel.findById(req.body.userId);
-  const comment = new CommentModel({
-    userId: req.body.userId,
-    userName: user.username,
-    postId: req.body.postId,
-    comment: req.body.comment,
-  });
-  const newComment = await comment.save();
 
-  await post.updateOne({ $push: { comments: newComment._id } });
-  res.json(newComment);
+  try {
+    
+    
+      const post = await PostModel.findById(req.body.postId);
+      const user = await UserModel.findById(req.body.userId);
+      const comment = new CommentModel({
+        userId: req.body.userId,
+        userName: user.username,
+        postId: req.body.postId,
+        comment: req.body.comment,
+      });
+      const newComment = await comment.save();
+    
+      await post.updateOne({ $push: { comments: newComment._id } });
+      res.json(newComment);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 };
 
 const addReplyComment = async (req, res) => {
-  const comment = await CommentModel.findById(req.body.commentId);
-  const user = await UserModel.findById(req.body.userId);
-  const replyComment = new replyCommentModel({
-    userId: req.body.userId,
-    userName: user.username,
-    commentId: req.body.commentId,
-    postId: comment.postId,
-    reply: req.body.reply,
-  });
-  const newReplyComment = await replyComment.save();
 
-  await comment.updateOne({ $push: { reply: newReplyComment._id } });
-  res.json(newReplyComment);
+  try {
+    
+    
+      const comment = await CommentModel.findById(req.body.commentId);
+      const user = await UserModel.findById(req.body.userId);
+      const replyComment = new replyCommentModel({
+        userId: req.body.userId,
+        userName: user.username,
+        commentId: req.body.commentId,
+        postId: comment.postId,
+        reply: req.body.reply,
+      });
+      const newReplyComment = await replyComment.save();
+    
+      await comment.updateOne({ $push: { reply: newReplyComment._id } });
+      res.json(newReplyComment);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 };
 
 const getCommets = async (req, res) => {
-  const postId = mongoose.Types.ObjectId(req.body.postId);
-
-  const comments = await commentModel.find({ postId: postId });
-  comments.reverse();
-  res.json(comments);
+  try {
+    
+    const postId = mongoose.Types.ObjectId(req.body.postId);
+  
+    const comments = await commentModel.find({ postId: postId });
+    comments.reverse();
+    res.json(comments);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 };
 
 const getReplyCommets = async (req, res) => {
-  const commentId = mongoose.Types.ObjectId(req.params.commetId);
-
-  const replyComments = await replyCommentModel.find({ commentId: commentId });
-  replyComments.reverse();
-  res.json({ replyComments });
+  try {
+    
+    const commentId = mongoose.Types.ObjectId(req.params.commetId);
+  
+    const replyComments = await replyCommentModel.find({ commentId: commentId });
+    replyComments.reverse();
+    res.json({ replyComments });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 };
 
 // const deleteComment = async (req, res) => {
@@ -288,6 +321,7 @@ const updateProfile = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.status(500).json(error)
   }
 };
 
@@ -309,6 +343,7 @@ const profilePictureRemove = async (req, res) => {
     res.json({ remove: true });
   } catch (error) {
     console.log(error);
+    res.status(500).json(error)
   }
 };
 const profilePictureUpdate = async (req, res) => {
@@ -356,6 +391,7 @@ const profilePictureUpdate = async (req, res) => {
     res.status(200).json({ update: true, profilePictureUrl: url });
   } catch (error) {
     console.log(error);
+    res.status(500).json(error)
   }
 };
 
@@ -379,7 +415,6 @@ const suggestions = async (req, res) => {
     let followers = user[0].followers;
     let following = user[0].following;
 
-    console.log(following);
 
     // $and:[_id:{$ne:userId},{$and:[ {_id:{$nin:followers} },{ _id: { $nin: following }}]}]
     const users = await UserModel.find({
@@ -406,6 +441,7 @@ const suggestions = async (req, res) => {
     res.json({ users });
   } catch (error) {
     console.log(error);
+   res.status(500).json(error)
   }
 };
 
@@ -426,10 +462,9 @@ const follow = async (req, res) => {
     );
 
     res.json({ follow: true });
-    console.log("follow");
   } catch (error) {
     console.log(error);
-    res.json({ follow: false });
+    res.json({ follow: false ,error:error});
   }
 };
 
@@ -440,25 +475,20 @@ const unFollow = async (req, res) => {
       { _id: req.params.userId },
       { $pull: { following: mongoose.Types.ObjectId(req.params.followingId) } }
     );
-    console.log("1");
     await UserModel.updateOne(
       { _id: req.params.followingId },
       { $pull: { followers: mongoose.Types.ObjectId(req.params.userId) } }
     );
-    console.log("2");
     res.json({ unFollow: true });
-    console.log("unfollow");
   } catch (error) {
     console.log(error);
-    res.json({ unFollow: false });
+    res.json({ unFollow: false ,error:error});
   }
 };
 
 const search = async (req, res) => {
   try {
-    console.log(req.query.search);
-    console.log(req.params.userId);
-
+  
     const searchInput = req.query.search; // search input
     const currentUserId = req.params.userId; // ID of the current user
 
@@ -469,7 +499,6 @@ const search = async (req, res) => {
       }).limit(5);
 
       if (results.length === 0) {
-        console.log("zero");
         res.json({ message: true, data: false });
         return;
       }
@@ -487,13 +516,11 @@ const search = async (req, res) => {
       }
 
       res.json({ data: results, message: false });
-      console.log("trim");
     } else {
-      console.log("notrim");
       res.json(null);
     }
   } catch (error) {
-    // console.log(error.message);
+    res.status(500).json(error)
   }
 };
 
@@ -511,25 +538,21 @@ const editpost = async (req, res) => {
       post.image = url;
     }
 
-    console.log("response sent");
     res.status(200).json(post);
   } catch (error) {
     res.json({ error: true });
-    console.log(error);
   }
 };
 
 const postUpdate = async (req, res) => {
-  console.log(req.body, "req.body");
   try {
     const randomImagename = uuidv4();
 
     let { description, deleteImage } = req.body;
 
-    console.log("deleteImage:", deleteImage);
 
     if (deleteImage == "true") {
-      console.log("delete akki");
+
     }
 
     const post = await PostModel.findOne({
@@ -548,7 +571,6 @@ const postUpdate = async (req, res) => {
             }
           )
           .then((data) => {
-            console.log("data", data);
             res.status(200).json(data);
             return;
           });
@@ -573,7 +595,6 @@ const postUpdate = async (req, res) => {
               }
             )
             .then((data) => {
-              console.log("data", data);
               res.status(200).json(data);
               return;
             });
@@ -588,7 +609,6 @@ const postUpdate = async (req, res) => {
               }
             )
             .then((data) => {
-              console.log("data", data);
               res.status(200).json(data);
               return;
             });
@@ -636,7 +656,6 @@ const postUpdate = async (req, res) => {
 
       if (description?.trim() !== "" && description) {
         // there is description
-        console.log(description, "description");
         await postModel
           .updateOne(
             { _id: post._id },
@@ -647,7 +666,6 @@ const postUpdate = async (req, res) => {
             }
           )
           .then(async (data) => {
-            console.log(data, "updated data");
             if (post.image) {
               const params = {
                 Bucket: bucketName,
@@ -667,7 +685,6 @@ const postUpdate = async (req, res) => {
             { image: randomImagename, updated: true }
           )
           .then(async (data) => {
-            console.log(data, "updated data");
             if (post.image) {
               const params = {
                 Bucket: bucketName,
@@ -688,37 +705,42 @@ const postUpdate = async (req, res) => {
 };
 
 const deletePost = async (req, res) => {
-  const post = await postModel.findById(req.params.id);
 
-  if (!post?.image) {
-    console.log("no image");
-  } else {
-    const params = {
-      Bucket: bucketName,
-      Key: post.image,
-    };
-    const command = new DeleteObjectCommand(params);
-    await s3.send(command);
-  }
-
-  PostModel.deleteOne({ _id: mongoose.Types.ObjectId(req.params.id) }).then(
-    (data) => {
-      console.log(data);
-
-      commentModel
-        .deleteMany({ postId: mongoose.Types.ObjectId(req.params.id) })
-        .then((data) => {
-          console.log(data);
-          replyCommentModel
+  try {
+    
+    
+      const post = await postModel.findById(req.params.id);
+    
+      if (!post?.image) {
+      } else {
+        const params = {
+          Bucket: bucketName,
+          Key: post.image,
+        };
+        const command = new DeleteObjectCommand(params);
+        await s3.send(command);
+      }
+    
+      PostModel.deleteOne({ _id: mongoose.Types.ObjectId(req.params.id) }).then(
+        (data) => {
+    
+          commentModel
             .deleteMany({ postId: mongoose.Types.ObjectId(req.params.id) })
             .then((data) => {
-              console.log(data);
+              replyCommentModel
+                .deleteMany({ postId: mongoose.Types.ObjectId(req.params.id) })
+                .then((data) => {
+    
+                });
             });
-        });
-    }
-  );
-
-  res.status(200).json({ delete: true });
+        }
+      );
+    
+      res.status(200).json({ delete: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 };
 
 const deleteComment = async (req, res) => {
@@ -755,7 +777,6 @@ const deleteReplyComment = async (req, res) => {
     );
 
     replyCommentModel.deleteOne({ _id: req.params.id }).then((data) => {
-      console.log(data);
       res.status(200).json({ deleted: true });
     });
   } catch (error) {
@@ -765,7 +786,6 @@ const deleteReplyComment = async (req, res) => {
 };
 
 const getfriends=async(req,res)=>{
-
 
   try {
     const user=await UserModel.findById(req.params.id);
@@ -778,7 +798,6 @@ const getfriends=async(req,res)=>{
     for (const friend of friends) {
   
       if (!friend?.profilePicture) {
-        console.log("no profilePicture");
       }else{
         const getObjectParams = {
           Bucket: bucketName,
@@ -800,7 +819,79 @@ const getfriends=async(req,res)=>{
 
 }
 
+const getLikedUsers=async(req,res)=>{ 
 
+  try {
+    
+    const Post=await postModel.findOne({_id:mongoose.Types.ObjectId(req.params.id)})
+  
+    const array= Post.like?.map((elem)=>{
+        return mongoose.Types.ObjectId(elem)
+    })
+  const users=await UserModel.find({_id:{$in:array}})
+
+    res.status(200).json(users) 
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error)
+  }
+
+
+}
+
+
+const getFollowers=async(req,res)=>{ 
+
+
+  try {
+    
+//  const users=await UserModel.aggregate([{$match:{_id:mongoose.Types.ObjectId(req.params.id)}},
+//  {$unwind:"$followers"},
+//  {$project:{followers:1}},
+// ])
+
+const user=await UserModel.findById(req.params.id)
+
+const array =user.followers
+
+const users=await UserModel.find({_id:{$in:array}})
+
+
+  
+    res.status(200).json(users) 
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error)
+  }
+
+
+}
+
+
+const getFollowing=async(req,res)=>{ 
+
+
+  try {
+    
+//  const users=await UserModel.aggregate([{$match:{_id:mongoose.Types.ObjectId(req.params.id)}},
+//  {$unwind:"$followers"},
+//  {$project:{followers:1}},
+// ])
+
+const user=await UserModel.findById(req.params.id)
+
+const array =user.following
+
+const users=await UserModel.find({_id:{$in:array}})
+
+console.log(users.length);
+  
+    res.status(200).json(users) 
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error)
+  }
+}
 
 const hai = (req, res) => {
   // console.log("hai");
@@ -830,4 +921,7 @@ module.exports = {
   deleteReplyComment,
   getfriends,
   hai,
+  getLikedUsers,
+  getFollowers,
+  getFollowing
 };

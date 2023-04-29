@@ -1,8 +1,9 @@
 //  
-import { Link ,useNavigate} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import { ToastContainer,toast } from 'react-toastify'
 import axios from "axios"
+import { baseUrl } from '../Utility/utility';
 
 const AdminLogin = () => {
   console.log("user login react");
@@ -22,7 +23,7 @@ const AdminLogin = () => {
     console.log("addddddddddddddddddddd");
     try {
       const  { data }  = await axios.post(
-        "http://localhost:8800/api/auth/adminlogin",
+        `${baseUrl}/auth/adminlogin`,
         { ...datas },
         {
           withCredentials: true,

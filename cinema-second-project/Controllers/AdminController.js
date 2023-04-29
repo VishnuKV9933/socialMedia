@@ -40,21 +40,29 @@ const allUsers = async (req, res) => {
 };
 
 const blockUnblock = async (req, res) => {
-  const user = await UserModel.findById(req.params.id);
 
-  if (!user.block) {
-    const response = await UserModel.updateOne(
-      { _id: mongoose.Types.ObjectId(req.params.id) },
-      { block: true }
-    );
-    res.status(200).json(response);
-  } else {
-    const response = await UserModel.updateOne(
-      { _id: mongoose.Types.ObjectId(req.params.id) },
-      { block: false }
-    );
-    res.status(200).json(response);
+  try {
+    const user = await UserModel.findById(req.params.id);
+
+    if (!user.block) {
+      const response = await UserModel.updateOne(
+        { _id: mongoose.Types.ObjectId(req.params.id) },
+        { block: true }
+      );
+      res.status(200).json(response);
+    } else {
+      const response = await UserModel.updateOne(
+        { _id: mongoose.Types.ObjectId(req.params.id) },
+        { block: false }
+      );
+      res.status(200).json(response);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
   }
+
+  
 };
 
 const reportPost = async (req, res) => {
@@ -107,8 +115,9 @@ const reportPost = async (req, res) => {
 const getReportedPosts = async (req, res) => {
   try {
     const reportedPost = await ReportedModel.find({ blocked: false });
-
+    console.log("reportedPost");
     res.status(200).json(reportedPost);
+   
   } catch (error) {
     console.log(error);
 
@@ -159,11 +168,147 @@ const hidePost=async(req,res)=>{
 
 }
 
+const postPerWeek=async(req,res)=>{
+  
+  try {
+    
+    const daily = await postModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // get posts from last 7 days
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: "%m-%d",
+              date: "$createdAt"
+            }
+          },
+          post_count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ])
+    
+  const monthly=await postModel.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) // get posts from last 365 days
+        }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          $dateToString: {
+            format: "%Y-%m",
+            date: "$createdAt"
+          }
+        },
+        post_count: { $sum: 1 }
+      }
+    },
+    {
+      $sort: { _id: 1 }
+    }
+  ])
+  
+  
+    res.status(200).json({daily,monthly})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+
+}
+
+
+const userPerWeek=async(req,res)=>{
+
+  try {
+    
+    
+    const daily= await UserModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // last week
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: "%m-%d",
+              date: "$createdAt"
+            }
+          },
+          new_user: {
+            $sum: 1
+          }
+        }
+      },
+      {
+        $sort: {
+          _id: 1
+        }
+      }
+    ])
+    
+    const monthly=await UserModel.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) // get posts from last 365 days
+          }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: "%Y-%m",
+              date: "$createdAt"
+            }
+          },
+          new_user: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ])
+    
+    const count= await UserModel.find().count()
+    
+            res.status(200).json({daily,monthly,count})
+    
+            
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+
+}
+
+
 module.exports = {
   allUsers,
   blockUnblock,
   reportPost,
   getReportedPosts,
   getPost,
-  hidePost
+  hidePost,
+  postPerWeek,
+  userPerWeek
 };
+
+

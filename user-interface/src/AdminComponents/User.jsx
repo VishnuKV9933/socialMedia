@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useState } from 'react'
+import { baseUrl } from '../Utility/utility';
 
 function User({user}) {
 
@@ -10,7 +11,7 @@ function User({user}) {
         setBlock(!block)
 
         try {
-            const res=await  axios.put(`http://localhost:8800/api/admin/userblockunblock/`+user?._id)
+            const res=await  axios.put(`${baseUrl}/admin/userblockunblock/`+user?._id)
         } catch (error) {
             console.log(error);
         }

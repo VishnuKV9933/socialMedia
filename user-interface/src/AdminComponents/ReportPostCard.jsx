@@ -9,6 +9,8 @@ import * as timeago from 'timeago.js';
 import { defaultProfilePicUrl } from "../Utility/utility"; 
 // import it first.
 import vi from 'timeago.js/lib/lang/vi';
+import { baseUrl } from '../Utility/utility';
+
 timeago.register('vi', vi);
 function ReportPostCard({ post,
   posts,
@@ -36,7 +38,7 @@ function ReportPostCard({ post,
   
     useEffect(() => {
       const getPostUser = async () => {
-        const user = await axios.post("http://localhost:8800/api/users/getuser", {
+        const user = await axios.post(`${baseUrl}/users/getuser`, {
           userId: post.userId,
         });
       if(!user?.data?.profilePicture){

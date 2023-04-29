@@ -44,7 +44,6 @@ const handleErrors = (err) => {
     errors.email = "email is already in use";
     return errors;
   } else if (err.keyPattern?.mobile === 1) {
-    console.log("err12");
     errors.email = "Mobile number is already in use";
     return errors;
   }
@@ -58,7 +57,6 @@ const handleErrors = (err) => {
 
 const userSignUP = async (req, res) => {
   try {
-    console.log(req.body);
     const salt = bcrypt.genSaltSync(10);
     const hashPassword = await bcrypt.hash(req.body.password, salt);
     const newUser = new User({
@@ -80,7 +78,6 @@ const userSignUP = async (req, res) => {
     });
   } catch (err) {
     const errors = handleErrors(err);
-    console.log("errors");
     console.log(errors);
 
     res.json({ errors, created: false });
@@ -91,17 +88,14 @@ const userLogin = async (req, res) => {
   try {
 
     const user = await User.findOne({ email: req.body.email });
-    console.log("-----------------3----------------------");
 
     if (!user) {
-      console.log("-----------------3----------------------");
 
       throw new Error("Email not in use");
 
     }
 
     if (user) {
-      console.log("-----------------4----------------------");
 
       const validpassword = await bcrypt.compare(
         req.body.password,
@@ -109,7 +103,6 @@ const userLogin = async (req, res) => {
       ); 
 
       if (!validpassword) {
-        console.log("-----------------5----------------------");
 
         throw new Error("wrong pasword");
       }
@@ -127,7 +120,6 @@ const userLogin = async (req, res) => {
             maxAge: maxAge * 10000,
           });
   
-          console.log(token);
   
           res.status(200).json(user);
         }else{
@@ -140,7 +132,6 @@ const userLogin = async (req, res) => {
       }
     }
   } catch (err) {
-    console.log("-----------------7----------------------");
 
     const errors = handleErr(err);
 
@@ -151,38 +142,29 @@ const userLogin = async (req, res) => {
 
 const AdminLogin=(req,res)=>{
 
-console.log("adminlogin");
   try {
-    console.log("________________1--------------------------");
     const Adminemail=process.env.AdminEmail
     const Adminpassword=process.env.AdminPassword
   
     const { email,password } = req.body
-    console.log(email+password);
   
     if(Adminemail!=email){
-      console.log("________________2--------------------------");
       throw new Error("Email not in use");
     }else if(Adminpassword!=password){
-      console.log("________________2--------------------------");
       throw new Error("wrong pasword");
     }else{
-      console.log("________________3--------------------------");
       const token = createAdminToken(process.env.AdminId);
       res.cookie("adminjwt",token,{
        withCredentials:true,
        httpOnly:false,
        maxAge:maxAge*1000
       })
-      console.log("________________4--------------------------");
       res.json({status:true})
       
     }
   }
   catch (err){
-    console.log("________________5--------------------------");
     const errors = handleErr(err);
-
     res.json({ errors, created: false });
   }
 
@@ -193,41 +175,55 @@ console.log("adminlogin");
 }
 
 const Otplogin=async(req,res)=>{
-console.log(req.params.mobile);
 
-const user=await UserModel.findOne({mobile:req.params.mobile})
+  try {
+    
+    
+    const user=await UserModel.findOne({mobile:req.params.mobile})
+    
+    if(!user){
+    
+      res.json({user:false})
+    }
+    else{
+    
+      res.json({user:user})
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 
-if(!user){
-
-  res.json({user:false})
-}
-else{
-
-  res.json({user:user})
-}
 }
 
 
 const otpVerify=async(req,res)=>{
 
-  const user=await UserModel.findOne({mobile:req.params.mobile})
-
-if(!user){
-
-  res.json({user:false})
-
-}
-else{
-
-  const token = createToken(user._id);
-  res.cookie("jwt", token, {
-    withCredentials: true,
-    httpOnly: false,
-    maxAge: maxAge * 10000,
-  });
-
-  res.json({user:user})
-}
+  try {
+    
+    
+      const user=await UserModel.findOne({mobile:req.params.mobile})
+    
+    if(!user){
+    
+      res.json({user:false})
+    
+    }
+    else{
+    
+      const token = createToken(user._id);
+      res.cookie("jwt", token, {
+        withCredentials: true,
+        httpOnly: false,
+        maxAge: maxAge * 10000,
+      });
+    
+      res.json({user:user})
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
 
 }
 

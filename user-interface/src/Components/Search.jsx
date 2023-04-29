@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React ,{useEffect, useRef, useState}from 'react'
 import Suggestion from './Suggestion';
+import { baseUrl } from '../Utility/utility';
 // import { useSelector } from "react-redux";
 function Search({searchPasser}) {
     const userId = JSON.parse(localStorage.getItem("userId"));
@@ -10,7 +11,7 @@ function Search({searchPasser}) {
     const inputRef=useRef()
     useEffect(()=>{
         const getUser=async()=>{
-          const user = await axios.post("http://localhost:8800/api/users/getuser", {
+          const user = await axios.post(`${baseUrl}/users/getuser`, {
             userId: userId,
           });
          
@@ -58,7 +59,7 @@ function Search({searchPasser}) {
             const fetchData=async()=>{
                 console.log("-----33-------");
 
-         let searchResult = await axios.get(`http://localhost:8800/api/users/user/${userId}/search?search=${search}`,)
+         let searchResult = await axios.get(`${baseUrl}/users/user/${userId}/search?search=${search}`,)
                  let {data,message}=searchResult.data
             //  setSeacrhData(searchResult.data)
             

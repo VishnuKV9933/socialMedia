@@ -1,36 +1,44 @@
 
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link ,useNavigate} from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import { ToastContainer,toast } from 'react-toastify'
 import axios from "axios"
 import { ProfileDetailsContext } from '../Context/ProfileContext';
 import { useCookies } from "react-cookie";
+import { baseUrl } from '../Utility/utility';
+
 
 
 
 const UserLogin = () => {
+  const [user,setUser]=useState(null)
 
+  console.log("--------------------------1------------------------------");
 
   const navigate=useNavigate()
 
 
 
+  
   const userId = JSON.parse(localStorage.getItem('userId'));
- 
 
   useEffect(()=>{
+    console.log("--------------------------u1------------------------------");
+
+    
+    
+
     if(!userId){
-      console.log("pleselogin");
+
     }else{
-      
-      console.log("navigate useeffect");
-
-      // navigate('/chat')
+      navigate('/')
     }
-  },[])
 
-  if(userId) navigate('/')
+
+  },[user])
+
+  console.log("--------------------------2------------------------------");
 
 
   const [cookies, removeCookie] = useCookies([]);
@@ -54,16 +62,14 @@ const UserLogin = () => {
 
   const onSubmit = async (datas) => {
     try {
-      console.log("000000000000000");
+      console.log("--------------------------submit------------------------------");
       const  { data }  = await axios.post(
-        "http://localhost:8800/api/auth/userlogin",
+        `${baseUrl}/auth/userlogin`,
         { ...datas },
         {
           withCredentials: true,
         }
       );
-console.log("datas");
-console.log(data);
       if(data){
         if(data.errors){ 
           console.log(data.errors);
@@ -79,13 +85,11 @@ console.log(data);
         }else{ 
           
 
-console.log("-----1-----");
 
     const verifyUser = async () => {
       console.log("-----1-----");
 
       if (!cookies.jwt) {
-        console.log("-----0-----");
 
         navigate("/userLogin");
       } else {
@@ -93,7 +97,7 @@ console.log("-----1-----");
         console.log("-----2-----");
 
         const { data } = await axios.post(
-          "http://localhost:8800/api/auth",
+          `${baseUrl}/auth`,
           {},
           {
             withCredentials: true,
@@ -105,20 +109,18 @@ console.log("-----1-----");
           removeCookie("jwt");
           navigate("/userLogin");
         } else {
-          console.log("-----4-----");
+          console.log("--------------------------last------------------------------");
 
-          localStorage.setItem('userId', JSON.stringify(data.user._id));
+         localStorage.setItem('userId', JSON.stringify(data.user._id))
 
-          navigate("/")
-
-
-
-          console.log("-----------5---------------");
-
+         
+         navigate("/")
+         
         }
+        
       }
     };
-
+    
 
     verifyUser();
  

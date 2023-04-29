@@ -284,7 +284,7 @@ function PostCard({ post,
                 </div> 
                 }
                  {/* -----------------------------------------more options------------------------------------------- */}
-              <div className="w-12 h-12 mr-4 hover:w-14 hover:h-14 overflow-hidden rounded-full transition-all"> 
+              <div className="w-12 h-12 mr-4  overflow-hidden rounded-full transition-all"> 
                 <img
                   src={profileImage}
                   alt="Profile"
@@ -292,7 +292,7 @@ function PostCard({ post,
                 />
               </div>
               <div className="">
-                <div onClick={() => navigate(`/peopleprofile/${post?.userId}`)} className="text-lg font-medium hover:font-bold transition-all">
+                <div onClick={() => navigate(`/peopleprofile/${post?.userId}`)} className="text-lg font-medium  transition-all">
                   {postUser?.username}<span className="text-sm ml-4 text-gray-600">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
                 <div className="text-sm text-gray-500">
                 <TimeAgo

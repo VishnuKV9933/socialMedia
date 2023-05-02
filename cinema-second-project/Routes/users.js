@@ -1,6 +1,6 @@
 // const { checkuser } = require("../Middlewares/AuthMiddlewares")
 const {userPostS3Upload,getPosts,likeUnlike,getuser,addComment,getCommets,addReplyComment,getReplyCommets,
-    getUserPosts,hai,updateProfile,profilePictureUpdate,profilePictureRemove,suggestions,follow,unFollow,
+    getUserPosts,updateProfile,profilePictureUpdate,profilePictureRemove,suggestions,follow,unFollow,
     search,editpost,deletePost,postUpdate,deleteComment,deleteReplyComment,getfriends,getLikedUsers,
     getFollowers,getFollowing} =require("../Controllers/UserController")
 
@@ -11,8 +11,6 @@ const {upload}=require('../otherFiles/multer')
 router.post("/userpost",upload.single('image'),userPostS3Upload)
 
 router.get("/getposts/:userId",getPosts)
-
-router.get("/getuserposts/id",hai)
 
 router.post("/getuser",getuser)
 

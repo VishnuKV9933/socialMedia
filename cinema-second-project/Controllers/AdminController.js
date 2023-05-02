@@ -66,7 +66,6 @@ const blockUnblock = async (req, res) => {
 };
 
 const reportPost = async (req, res) => {
-  console.log(req.body);
 
   try {
     const response = await UserModel.updateOne(
@@ -115,7 +114,6 @@ const reportPost = async (req, res) => {
 const getReportedPosts = async (req, res) => {
   try {
     const reportedPost = await ReportedModel.find({ blocked: false });
-    console.log("reportedPost");
     res.status(200).json(reportedPost);
    
   } catch (error) {

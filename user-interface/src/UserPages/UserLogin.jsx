@@ -14,7 +14,7 @@ import { baseUrl } from '../Utility/utility';
 const UserLogin = () => {
   const [user,setUser]=useState(null)
 
-  console.log("--------------------------1------------------------------");
+
 
   const navigate=useNavigate()
 
@@ -24,7 +24,7 @@ const UserLogin = () => {
   const userId = JSON.parse(localStorage.getItem('userId'));
 
   useEffect(()=>{
-    console.log("--------------------------u1------------------------------");
+   
 
     
     
@@ -38,18 +38,16 @@ const UserLogin = () => {
 
   },[user])
 
-  console.log("--------------------------2------------------------------");
+
 
 
   const [cookies, removeCookie] = useCookies([]);
   const { setProfile } = useContext(ProfileDetailsContext);
 
 
-  console.log("user login react");
 
 
  const generateError =(err) =>{
-  console.log("tost");
   toast.error(err,{
     position:"top-right"
   })
@@ -62,15 +60,16 @@ const UserLogin = () => {
 
   const onSubmit = async (datas) => {
     try {
-      console.log("--------------------------submit------------------------------");
       const  { data }  = await axios.post(
         `${baseUrl}/auth/userlogin`,
-        { ...datas },
+        { ...datas},
         {
           withCredentials: true,
         }
       );
+   
       if(data){
+        console.log(data , "success")
         if(data.errors){ 
           console.log(data.errors);
           const {email,password,block} =data.errors;
@@ -83,8 +82,10 @@ const UserLogin = () => {
             generateError(block)
           }
         }else{ 
-          
-
+          const token=data.token
+          console.log(token,'tokendddddddddddddddddd')
+          console.log("here at user login")
+          document.cookie=`jwt=${token}`
 
     const verifyUser = async () => {
       console.log("-----1-----");
@@ -95,16 +96,25 @@ const UserLogin = () => {
       } else {
 
         console.log("-----2-----");
+        console.log(token);
 
         const { data } = await axios.post(
           `${baseUrl}/auth`,
-          {},
           {
-            withCredentials: true,
-          }
+
+          },
+          {
+            headers: { authorization: "Bearer "+ token},
+          },
+          // {
+          //   withCredentials: true,
+          // }
         );
+
+        console.log("data-----",data);
+
         if (!data.status) {
-          console.log("-----3-----");
+          console.log("-----6-----");
 
           removeCookie("jwt");
           navigate("/userLogin");
@@ -130,7 +140,6 @@ const UserLogin = () => {
         }
       }
     } catch (err) {
-      console.log("-----5-----");
 
       console.log(err);
       console.log("data");

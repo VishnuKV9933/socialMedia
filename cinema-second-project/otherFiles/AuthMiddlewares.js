@@ -1,26 +1,34 @@
 const User = require("../Models/UserModel");
 const jwt = require("jsonwebtoken");
 
-module.exports. checkuser = (req, res, next) => {
- 
-    const token = req.cookies.jwt;
-    if (token) {
-        jwt.verify(token,process.env.userJwtKey, async (err, decodedToken) => {
-            if (err) {
-              
-                next();
-            } else {
-                const user = await User.findById(decodedToken.id);
-                if (user) {
-                    res.json({ status: true, user:user});
-                } else {
+module.exports.checkuser = (req, res, next) => {
+
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.substring(7);
+        if (token) {
+            jwt.verify(token,process.env.userJwtKey, async (err, decodedToken) => {
+                if (err) {
                     next();
-                } 
-            }
-        }); 
-    }else{ 
-        next();
-    }
+                } else {
+                    const user = await User.findById(decodedToken.id);
+                    if (user) {
+                        res.json({ status: true, user:user});
+                    } else {
+                        next();
+                    } 
+                }
+            }); 
+        }else{ 
+            next();
+        }
+      }
+
+ 
+    
+
+  
+
 };
 
 module.exports.checkAdmin=(req,res,next)=>{

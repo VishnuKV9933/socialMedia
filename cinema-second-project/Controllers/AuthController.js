@@ -40,7 +40,6 @@ const handleErrors = (err) => {
   let errors = { email: "", password: "" };
   console.log(err);
   if (err.keyPattern?.email === 1) {
-    console.log("err");
     errors.email = "email is already in use";
     return errors;
   } else if (err.keyPattern?.mobile === 1) {
@@ -85,8 +84,9 @@ const userSignUP = async (req, res) => {
 };
 
 const userLogin = async (req, res) => {
+  
   try {
-
+  
     const user = await User.findOne({ email: req.body.email });
 
     if (!user) {
@@ -101,7 +101,7 @@ const userLogin = async (req, res) => {
         req.body.password,
         user.password
       ); 
-
+ 
       if (!validpassword) {
 
         throw new Error("wrong pasword");
@@ -110,18 +110,19 @@ const userLogin = async (req, res) => {
       if (validpassword) {
 
 
-
+    
         if(!user.block){
 
           const token = createToken(user._id);
-          res.cookie("jwt", token, {
-            withCredentials: true,
-            httpOnly: false,
-            maxAge: maxAge * 10000,
-          });
+       
+          // res.cookie("jwt", token, {
+          //   withCredentials: true,
+          //   httpOnly: false,
+          //   maxAge: maxAge * 10000,
+          // });
   
   
-          res.status(200).json(user);
+          res.status(200).json({user:user,token:token});
         }else{
           
           throw new Error("You are blocked by admin");
@@ -154,12 +155,12 @@ const AdminLogin=(req,res)=>{
       throw new Error("wrong pasword");
     }else{
       const token = createAdminToken(process.env.AdminId);
-      res.cookie("adminjwt",token,{
-       withCredentials:true,
-       httpOnly:false,
-       maxAge:maxAge*1000
-      })
-      res.json({status:true})
+      // res.cookie("adminjwt",token,{
+      //  withCredentials:true,
+      //  httpOnly:false,
+      //  maxAge:maxAge*1000
+      // })
+      res.json({status:true,token})
       
     }
   }

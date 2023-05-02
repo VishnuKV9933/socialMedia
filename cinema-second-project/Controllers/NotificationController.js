@@ -150,10 +150,6 @@ const follow=async(req,res)=>{
 
     try {
         const user=await UserModel.findById(req.body.userId)
-
-        console.log("req.body");
-        console.log(req.body);
-
     const data={
         postId:null,
         senderName:user.username,

@@ -399,24 +399,15 @@ const suggestions = async (req, res) => {
   try {
     const userId = mongoose.Types.ObjectId(req.params.id);
 
-    // const suggestions=await UserModel.aggregate([
-    //   { $match: { _id: userId } },
-    //   { $unwind: "$followers" },
-    //   {$unwind:"$following"}
-    // ]).exec()
-
-    // console.log("suggestions;",suggestions);
 
     // -------------------------------------------------------------------------------------------------------
     const user = await UserModel.find({ _id: userId });
-    // console.log("users::",users);
-    // if(users[0].followers.length > 0) console.log("followers extis")
+   
 
     let followers = user[0].followers;
     let following = user[0].following;
 
 
-    // $and:[_id:{$ne:userId},{$and:[ {_id:{$nin:followers} },{ _id: { $nin: following }}]}]
     const users = await UserModel.find({
       $and: [
         { _id: { $ne: userId } },
@@ -753,11 +744,9 @@ const deleteComment = async (req, res) => {
     );
 
     commentModel.deleteOne({ _id: req.params.id }).then((data) => {
-      console.log(data);
       replyCommentModel
         .deleteMany({ commentId: req.params.id })
         .then((data) => {
-          console.log(data);
           res.status(200).json({ deleted: true });
         });
     });
@@ -884,7 +873,6 @@ const array =user.following
 
 const users=await UserModel.find({_id:{$in:array}})
 
-console.log(users.length);
   
     res.status(200).json(users) 
   } catch (error) {
@@ -893,9 +881,6 @@ console.log(users.length);
   }
 }
 
-const hai = (req, res) => {
-  // console.log("hai");
-};
 
 module.exports = {
   userPostS3Upload,
@@ -920,7 +905,6 @@ module.exports = {
   deleteComment,
   deleteReplyComment,
   getfriends,
-  hai,
   getLikedUsers,
   getFollowers,
   getFollowing

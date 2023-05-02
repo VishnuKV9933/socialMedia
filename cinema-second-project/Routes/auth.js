@@ -5,7 +5,7 @@ const router = require("express").Router();
  const {userSignUP,userLogin,AdminLogin,Otplogin,otpVerify} = require("../Controllers/AuthController");
  const { checkuser ,checkAdmin} = require("../otherFiles/AuthMiddlewares");
  
-router.post("/",checkuser ,(req, res) => {
+router.post("/", checkuser ,(req, res) => {
 console.log("-------------dsfjdsfjkdshfkjdshkjfhdskjh");
 res.json({ status: false });
 }); 

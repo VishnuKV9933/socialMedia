@@ -15,9 +15,7 @@ function UserMangement() {
     },[])
 
     const getUsers=async()=>{
-        console.log("hai");
         const res=   await axios.get(`${baseUrl}/admin/getuser`)
-        console.log("res.data");
         let count=1
         for(const user of res.data){
             user.slno=count;
@@ -26,7 +24,7 @@ function UserMangement() {
         setUsers(res.data)
        }
 
-       console.log("users",users);
+     
 
   return (
     <div>

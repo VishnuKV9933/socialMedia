@@ -6,11 +6,10 @@ import axios from "axios"
 import { baseUrl } from '../Utility/utility';
 
 const AdminLogin = () => {
-  console.log("user login react");
-  console.log("user login react");
+
   const navigate=useNavigate()
  const generateError =(err) =>{
-  console.log("tost");
+  
   toast.error(err,{
     position:"top-right"
   })
@@ -21,7 +20,6 @@ const AdminLogin = () => {
     formState: { errors }
   } = useForm();
   const onSubmit = async (datas) => {
-    console.log("addddddddddddddddddddd");
     try {
       const  { data }  = await axios.post(
         `${baseUrl}/auth/adminlogin`,
@@ -30,33 +28,26 @@ const AdminLogin = () => {
           withCredentials: true,
         }
       );
-console.log("datassssssssssssssssssss");
 document.cookie=`adminjwt=${data.token}`
-console.log(data);
       if(data){
-        console.log("------------------data1--------------");
         if(data.errors){ 
-          console.log("------------------data2--------------");
-          console.log(data.errors);
-          console.log("------------------data3--------------");
+        
           const {email,password} =data.errors;
           if(email){ 
-            console.log("------------------data4--------------");
+          
              generateError(email) }
              
           else if(password) {
-            console.log("------------------data5--------------");
+        
             generateError(password)
           }
         }else{ 
-          console.log("------------------data6--------------");
+       
            navigate("/adminhome")
         }
       }
     } catch (err) {
-      console.log("------------------data--------------");
       console.log(err);
-      console.log("data");
     }
     };
   return (

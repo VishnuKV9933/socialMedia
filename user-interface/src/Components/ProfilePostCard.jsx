@@ -104,11 +104,9 @@ function ProfilePostCard({ post,
   // }
   
   const postCaller =async () => {
-console.log("postcaller2");
   await  axios
     .get(`${baseUrl}/users/userpost/${userId}`)
     .then((data) => {
-        console.log(data.data.posts);
       setPosts(data.data.posts);
        
      });

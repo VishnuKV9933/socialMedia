@@ -24,7 +24,6 @@ function ReportedPost({report,getReportedPost}) {
     const hidePost=async ()=>{
       const res=await   axios.put(`${baseUrl}/admin/hidepost/${report?.postId}`)
 
-      console.log("res.data",res.data);
       getReportedPost()
     }
 

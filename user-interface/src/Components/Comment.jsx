@@ -133,7 +133,6 @@ const data = await axios.get(`${baseUrl}/users/getreplycomments/${comment._id}`)
         Obj.commentOwner=comment.userId
         Obj.reply=replyComment
         axios.post(`${baseUrl}/notification/replycomment`,Obj).then((data)=>{
-          console.log(data);
         })
 
 

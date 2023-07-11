@@ -42,7 +42,6 @@ function ReportPostCard({ post,
           userId: post.userId,
         });
       if(!user?.data?.profilePicture){
-        console.log("");
         
       }else{
         setProfileImage(user?.data?.profilePicture)

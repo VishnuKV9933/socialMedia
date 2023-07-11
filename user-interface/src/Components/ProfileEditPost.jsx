@@ -36,13 +36,10 @@ let post=null
 
     useEffect(()=>{
         axios.get(`${baseUrl}/users/editpost/${postId}`).then((data)=>{
-            console.log("data",data.data);
             post=data.data;
             setDescription(post.description)
             if(post?.image){
-                console.log("keri");
                 setInitialFile(post.image)
-                console.log("initialFile",initialFile);
                 setfile(true);
                 setHadImage(true)
             }
@@ -51,48 +48,35 @@ let post=null
 
     const submit=(e)=>{
     
-console.log('--------------1----------------');
     e.preventDefault();
-    console.log('--------------2----------------');
 
     const data = new FormData();
     const jwt = cookies.jwt;
-    console.log('--------------3----------------');
 
     data.append("deleteImage",deleteImage)
-    console.log('--------------4----------------');
     data.append('post',postId)
     
     if(file&&description){
       data.append("image", file[0]);
       data.append("description", description);
-      console.log('--------------5----------------');
 
     }else if(file){
       data.append("image", file[0]);
-      console.log('--------------6----------------');
 
     }else if(description){
       data.append("description", description);
-      console.log('--------------7----------------');
 
     }else{
-      console.log('--------------8----------------');
 
       return
     }
-    console.log('--------------9----------------');
 
     axios
       .post(`${baseUrl}/users/postupdate`, data, {
         headers: { ContentType: "multipart/form-data", jwt: jwt },
       })
       .then((data) => {
-        console.log(".then");
-    //  dispatch(setPosts({
-    //   posts : [data.data, ...posts]
-    //  }))
-      //  setPost([data.data, ...posts])
+   
      
        setDescription(null)
        setfile(null)

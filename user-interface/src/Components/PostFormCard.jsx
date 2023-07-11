@@ -48,6 +48,8 @@ function PostFormCard2({postAlert,
     }}
 
 
+
+
   const selectFile=(e)=>{
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -65,7 +67,6 @@ function PostFormCard2({postAlert,
     const jwt = cookies.jwt;
 
     if(file){
-      console.log("file:",file[0].type);
     }
     if(file&&description){
       data.append("image", file[0]);
@@ -103,7 +104,6 @@ function PostFormCard2({postAlert,
 // socket.current.emit("sendPost",notice)
 
    axios.post(`${baseUrl}/notification/post`,data.data).then((data)=>{
-        console.log(data);
       })
 
       })
@@ -137,7 +137,6 @@ function PostFormCard2({postAlert,
 
 
         <div id="photo&share" className="flex w-1/4 gap-2">
-        {/* file[0].type!=="image/jpeg"||file[0].type!=="image/jpg"||file[0].type!=="image/jpg" */}
           <label className="flex justify-center h-10 items-center rounded-xl w-1/2 hover:h-11  h:text-white  border-solid">
             <div id="photo">
               <input
@@ -152,12 +151,7 @@ function PostFormCard2({postAlert,
           </label>
 
 <ShareButton/>
-          {/* <button
-            type="submit"
-            id="share"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110">
-            share
-          </button> */}
+        
 
         </div>
       </form>

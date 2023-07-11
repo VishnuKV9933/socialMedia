@@ -9,7 +9,6 @@ import SideBar from "../AdminComponents/SideBar";
 import UserMangement from "../AdminComponents/UserMangement";
 
 function AdminHomePage() {
-  console.log("---------------------1---------------------");
   const navigate = useNavigate();
 
 
@@ -19,23 +18,17 @@ function AdminHomePage() {
   useEffect(() => {
     const verifyToken = async () => {
       if (!cookies.adminjwt) {
-        console.log("---------------------22---------------------");
         navigate("/adminlogin");
       } else {
-        console.log("---------------------3---------------------");
         const { data } = await axios.post(
           `${baseUrl}/auth/checkadmin`,
           {},
           { withCredentials: true }
         );
-        console.log(data);
-        console.log(data.status);
         if (!data.status) {
-          console.log("---------------------4---------------------");
           removeCookie("adminjwt");
           navigate("/adminlogin");
         } else {
-          console.log("---------------------5---------------------");
           toast("Welcome");
         }
       }

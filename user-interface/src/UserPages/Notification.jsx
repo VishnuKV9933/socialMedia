@@ -20,7 +20,6 @@ function Notification() {
 
        setNotification(res.data)
     
-    console.log("res.data");
       
     }
 

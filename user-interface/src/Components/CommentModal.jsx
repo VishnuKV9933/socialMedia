@@ -111,7 +111,6 @@ function CommendModal({
         })
         .then((data) => {
           setAllComments([data.data, ...allComments]);
-          console.log("--------------jjjjjjjjjjjj----------");
          
         });
 
@@ -119,7 +118,6 @@ function CommendModal({
         Obj.commenderId=userId
         Obj.comment=comment
         axios.post(`${baseUrl}/notification/commentpost`,Obj).then((data)=>{
-          console.log(data);
         })
 
       textareaRef.current.value = "";
@@ -203,7 +201,6 @@ function CommendModal({
             </div>
           )}
           {allComments.map((comment) => {
-            console.log(comment);
             return (
               <Comment            
                 key={comment._id}

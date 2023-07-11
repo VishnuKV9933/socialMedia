@@ -2,15 +2,18 @@ import React, { useEffect, useRef, useState,useContext } from 'react'
 import Conversations from '../Components/Conversations'
 import Message from '../Components/Message'
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import {io} from 'socket.io-client'
 import {BiArrowBack} from 'react-icons/bi'
 import ChatOnline from '../Components/ChatOnline';
 import { ChatContext } from '../Context/ChatContext';
-import { defaultProfilePicUrl,baseUrl } from '../Utility/utility';
+import { defaultProfilePicUrl } from '../Utility/utility';
+
+import ConversationSeivice from '../ServiceLayer/conversationServiece.js';
+import userService from '../ServiceLayer/userSevice';
+import messageService from '../ServiceLayer/messageService';
+
 function Chat() {
 
-    console.log("------start------------------");
 
     const {currentChat,setCurrentChat} =useContext(ChatContext)
     const navigate=useNavigate()
@@ -31,7 +34,6 @@ function Chat() {
     const [count,setCount]=useState(0)
 
     useEffect(() => {
-        console.log("------u1------------------");
 
       if (!userId) {
         navigate("/");
@@ -40,7 +42,6 @@ function Chat() {
 
 
     useEffect(() => {
-        console.log("------u2------------------");
 
     if(!currentChat){
 
@@ -49,11 +50,10 @@ function Chat() {
 
 const getConversation=async()=>{
 
-    console.log("--------------------fungetconversation----------------");
 
             try {
-         
-                const res =await axios.get(`${baseUrl}/conversation/${currentChat.members[0]}/twouser/${currentChat.members[1]}`)
+                const res = ConversationSeivice.getTwoUserConverstions(currentChat.members[0],currentChat.members[1])
+              
                 if(!res.data){
                     setNewChat(true)
                 }else{
@@ -76,7 +76,6 @@ getConversation()
 
     
     useEffect(()=>{
-        console.log("------u3------------------");
 
         socket.current=io('ws://localhost:8900')
 
@@ -91,7 +90,6 @@ getConversation()
     },[])
 
     useEffect(()=>{
-        console.log("------u4------------------");
 
         arrivalMessage&&
         currentChat?.members.includes(arrivalMessage.senderId)&&
@@ -99,13 +97,10 @@ getConversation()
     },[arrivalMessage,currentChat])
 
     useEffect(() => {
-        console.log("------u5------------------");
 
       const getUser = async () => {
 
-        const res = await axios.post(`${baseUrl}/users/getuser`, {
-          userId: userId,
-        });
+        const res =await userService.getUser(userId)
         setUser(res.data)
       };
   
@@ -114,13 +109,10 @@ getConversation()
 
 
     useEffect(()=>{
-        console.log("--------------------u6----------------");
 
         const caller=async()=>{
 
-            const res = await axios.post(`${baseUrl}/users/getuser`, {
-                userId: userId,
-              });
+            const res =await userService.getUser(userId)
               setUser(res.data)
 
 
@@ -141,14 +133,13 @@ getConversation()
     
 
     useEffect(()=>{
-        console.log("------u7------------------");
 
         const getConversations=async ()=>{
             try {
-                const res =await axios.get(`${baseUrl}/conversation/`+userId)
-               setConversations(res.data)
+                const res=await ConversationSeivice.getConversations(userId)
+               setConversations(res)
             } catch (error) {
-                console.log("1",error);
+                console.log(error);
             }
         }
 
@@ -156,12 +147,11 @@ getConversation()
     },[userId])
    
     useEffect(()=>{
-        console.log("--------------------u8----------------");
 
         const getMessage=async ()=>{
             try {
-                const res =await axios.get(`${baseUrl}/message/`+currentChat?._id)
-                setMessages(res.data)
+                const res =await messageService.getMessages(currentChat?._id)
+                setMessages(res?.data)
             } catch (error) {
                console.log(error);
             }
@@ -176,16 +166,21 @@ getConversation()
 
     const getConversations=async ()=>{
 
-        console.log("--------------------u9----------------");
 
         try {
-            const res =await axios.get(`${baseUrl}/conversation/`+userId)
-           setConversations(res.data)
+            const res=await ConversationSeivice.getConversations(userId)
+           setConversations(res)
         } catch (error) {
             console.log("",error);
         }
     }
 
+    const userGet = async (elem) => {
+        const friendId =elem?.members?.find((m)=>(m!==userId))
+      
+        const res = await userService.getUser(friendId)
+        setCurrentChatFriend(res.data)
+        }
 
     const handlSubmit=async(e)=>{
         e.preventDefault();
@@ -193,7 +188,6 @@ getConversation()
         
         if(newMessage.trim()!==''){
             if(!newChat){
-    console.log("submit not new chat");
             
     setCount(count+1)
 
@@ -213,20 +207,20 @@ getConversation()
                     text:newMessage
                 })
     
-                const res = await axios.post(`${baseUrl}/message/`,message)
+                const res =await messageService.sendMessage(message)
 
-                console.log("message:",message);
-                console.log("res:",res.data);
+               
                 setMessages([...messages,res.data])
                 setNewMessage('')
     
             }else{
-                console.log("submit  new chat");
 
         // new chat without converstaion registered
                     const [id,userId]=currentChat.members
 
-               const res=  await axios.post(`${baseUrl}/conversation/`,{senderId:userId,receiverId:id})
+            //    const res=  await axios.post(`${baseUrl}/conversation/`,{senderId:userId,receiverId:id})
+
+            const res=await ConversationSeivice.getSingleConversation(userId,id)
 
 
                const message={
@@ -241,7 +235,7 @@ getConversation()
                 text:newMessage
             })
 
-            const ress = await axios.post(`${baseUrl}/message/`,message)
+            const ress =await messageService.sendMessage(message)
             setMessages([...messages,ress.data])
             setNewMessage('')
                 setNewChat(false)
@@ -250,8 +244,7 @@ getConversation()
         }
 
     }
-console.log("newChat",newChat);
-console.log("count",count);
+
   return (
     <div className='w-full h-screen  border  mt-1 border-blue-200 rounded overflow-y-scroll'>
       
@@ -273,20 +266,17 @@ console.log("count",count);
           {/* ----------------------Conversations--------------------------- */}
 
         <div className='cursor-default mt-6 mb-6 text-xl font-bold text-cyan-700 transition ease-in-out delay-200  hover:-translate-y-1 hover:scale-100   duration-300  hover:font-extrabold ' onClick={()=>{setOnlineOpen(true)}}>Find online friends</div>
-   {consversations.map((elem)=>{
+   {consversations?.map((elem)=>{
     return <>
     <div onClick={()=>{
+       
          setCurrentChat(null)
         setCurrentChat(elem)
-        const friendId =elem?.members?.find((m)=>(m!==userId))
+       
+        
 
-        const getUser = async () => {
-            const res = await axios.post("http://localhost:8800/api/users/getuser", {
-              userId: friendId,
-            })
-            setCurrentChatFriend(res.data)
-            }
-            getUser()
+        
+            userGet(elem)
         }}>
 
     <Conversations key={elem?._id} conversation={elem} currentUser={user}  setCurrentChatFriend={ setCurrentChatFriend }  />
@@ -313,7 +303,6 @@ console.log("count",count);
             setNewChat(false)
             setCurrentChat(null)
             setCurrentChatFriend(null)
-            console.log("--------------------1----------------");
             getConversations()
             }} className='ml-3'/>
             <img className='w-12 h-12 rounded-full ' src={currentChatFriend?.profilePicture?currentChatFriend?.profilePicture:defaultProfilePicUrl} alt="img" />

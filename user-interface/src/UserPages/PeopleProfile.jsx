@@ -52,8 +52,6 @@ const PeopleProfile = () => {
         userId: id,
       });
 
-      console.log("user.data");
-      console.log(user.data);
 
       setProfile(user.data);
       setFollowersCount(user.data.followers.length);
@@ -73,7 +71,6 @@ const PeopleProfile = () => {
   useEffect(() => {
     const getPost = async () => {
       try {
-        console.log(id);
         axios
           .get(`${baseUrl}/users/userpost/${id}`)
           .then((data) => {
@@ -176,13 +173,9 @@ const PeopleProfile = () => {
             <div
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("opennnn");
                 SetProfilePicOpen(true);
-                console.log("----------check6-----------");
 
-                console.log(profilePicOpen);
-                console.log("click3");
-
+              
               }}
               className="w-28 h-28 flex justify-center items-center  rounded-full bg-blue-200 overflow-hidden absolute z-10 bottom-56  left-10 P-3"
             >

@@ -32,43 +32,42 @@ function Navigation() {
 
   
 //     socket.current.on('toall',(data)=>{
-//       console.log("toall");
-//       console.log(data);
+
 //     })
 //     socket.current.on('getNotice',(data)=>{
-//       console.log("data",data);
 //      setCount(data)
 
 //     })
 
 // },[])
   return (
-    // bg-gradient-to-b from-pink-100  to-blue-100 hover:from-blue-100 hover:to-pink-100
-    <div className='w-full transition-all bg-gradient-to-b from-pink-200  to-blue-200 hover:from-blue-200 hover:to-pink-200 rounded-3xl mb-2 flex-row items-center  shadow-lg shadow-gray-200    p-4'>
+    // <div className='w-full transition-all bg-gradient-to-b from-pink-200  to-blue-200 hover:from-blue-200 hover:to-pink-200 rounded-3xl mb-2 flex-row items-center  shadow-lg shadow-gray-200    p-4'>
+    <div className='w-full transition-all bg-blue-200 text-sky-900	 rounded-3xl mb-2 flex-row items-center  shadow-lg shadow-gray-200    p-4'>
+
         <h2>Navigation</h2>
 <div className='' >
 
-          <NavLink  to='/' className=" flex items-center transition-all  hover:rounded-full hover:ml-6   gap-2 py-3">
-            <RiHomeLine className="  w-8 h-8" />
+          <NavLink  to='/' className="font-extrabold flex items-center transition-all  hover:rounded-full hover:ml-6   gap-2 py-3">
+            <RiHomeLine className="  w-8 h-8 font-bold" />
             HOME
             </NavLink>
 </div>
 
-          <button onClick={() => navigate('/profile')}  className="flex items-center transition-all hover:rounded-full  hover:ml-6  gap-2 py-3">
+          <button onClick={() => navigate('/profile')}  className="font-extrabold flex items-center transition-all hover:rounded-full  hover:ml-6  gap-2 py-3">
             <CgProfile className="w-8 h-8"/>
             PROFILE
             </button>
-          <NavLink  to="/chat" className="flex items-center transition-all hover:rounded-full  hover:ml-6  gap-2 py-3">
+          <NavLink  to="/chat" className="font-extrabold flex items-center transition-all hover:rounded-full  hover:ml-6  gap-2 py-3">
             <RiChatSmile3Line className="w-8 h-8"/>
             CHATS
             </NavLink>
 
-          <NavLink  to="/notification" className="flex items-center transition-all  hover:rounded-full  hover:ml-6  gap-2 py-3">
+          <NavLink  to="/notification" className="font-extrabold flex items-center transition-all  hover:rounded-full  hover:ml-6  gap-2 py-3">
             <MdNotificationsNone className="w-8 h-8"/>
             NOTICE!<>{count}</>
             </NavLink>
 
-          <button onClick={logout} className="flex items-center transition-all hover:rounded-full  hover:ml-6  gap-2 py-3">
+          <button onClick={logout} className="font-extrabold flex items-center transition-all hover:rounded-full  hover:ml-6  gap-2 py-3">
             <BiLogOutCircle className="w-8 h-8"/>
             LOGOUT
             </button>

@@ -9,14 +9,12 @@ function PostManagement() {
 
     const getReportedPost=async()=>{
         const res=   await axios.get(`${baseUrl}/admin/getreportedposts`)
-        console.log("getreported:",res.data);
         setReportedPost(res.data)
     }
     useEffect(()=>{
         getReportedPost()
     },[])
 
-    console.log(reportedPost);
 
   return (
     <div>

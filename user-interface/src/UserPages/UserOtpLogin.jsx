@@ -20,30 +20,47 @@ function UserOtpLogin() {
   const [reSend, setResend] = useState(true);
   const [reSendNumber, setResendNumber] = useState(null);
   const [timer, setTimer] = useState(0);
+  const [errorControler, setErrorControler] = useState(false);
+
+  const [invalid, setInvalid] = useState(false);
 
   const generateError = (err) => {
-    console.log("tost");
+   
     toast.error(err, {
       position: "top-right",
     });
   };
 
-
- function callInvalidotptost(){
-  console.log("errorcaller");
-   generateError("Invalid OTP");
- }
-
-
-
+  function callInvalidotptost() {
+    generateError("Invalid OTP");
+  }
 
   const resendCaller = () => {
-    setPhone(reSendNumber);
-    console.log("resend");
-    onsignup();
+
+    axios.get(`${baseUrl}/auth/otplogin/${phone.slice(3)}`).then((res) => {
+      if (!res.data.user) {
+        generateError("Mobile number not registered");
+        return null;
+      } else {
+        onCaptchVerify();
+        const appVerifier = window.recaptchaVerifier;
+        const formatPh = "+" + phone;
+        signInWithPhoneNumber(auth, formatPh, appVerifier)
+          .then((confimationResult) => {
+            window.confimationResult = confimationResult;
+            setLoading(false);
+
+            toast.success("Otp sent successfully!");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    });
   };
 
   function onCaptchVerify() {
+    setErrorControler(true);
     if (!window.ecaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
         "recaptcha-container",
@@ -60,11 +77,9 @@ function UserOtpLogin() {
   }
 
   function startTimer() {
-    console.log("timer");
 
     let myInterval = setInterval(() => {
       setTimer(timer + 1);
-      console.log(timer);
     }, 1000);
     setTimeout(() => {
       clearInterval(myInterval);
@@ -73,10 +88,11 @@ function UserOtpLogin() {
   }
 
   function onsignup() {
+    setErrorControler(false);
+
 
     setLoading(true);
 
-    console.log("signuop");
 
     if (!phone) {
       setLoading(false);
@@ -93,67 +109,138 @@ function UserOtpLogin() {
       generateError("Invalid Mobile number");
       return null;
     } else {
-      axios
-        .get(`${baseUrl}/auth/otplogin/${phone.slice(3)}`)
-        .then((res) => {
-          if (!res.data.user) {
-            setLoading(false);
-            generateError("Mobile number not registered");
-            return null;
-          } else {
-            setLoading(true);
-            onCaptchVerify();
-            const appVerifier = window.recaptchaVerifier;
-            const formatPh = "+" + phone;
-            signInWithPhoneNumber(auth, formatPh, appVerifier)
-              .then((confimationResult) => {
-                window.confimationResult = confimationResult;
-                setLoading(false);
-                setShowOtp(true);
-                setResendNumber(phone);
-                startTimer();
+      setResendNumber(phone?.slice(3));
+      axios.get(`${baseUrl}/auth/otplogin/${phone.slice(3)}`).then((res) => {
+        if (!res.data.user) {
+          setLoading(false);
+          generateError("Mobile number not registered");
+          return null;
+        } else {
+          setLoading(true);
+          onCaptchVerify();
+          const appVerifier = window.recaptchaVerifier;
 
+          const formatPh = "+" + phone;
+          signInWithPhoneNumber(auth, formatPh, appVerifier)
+            .then((confimationResult) => {
+              setErrorControler(true);
+              window.confimationResult = confimationResult;
+              setLoading(false);
+              setShowOtp(true);
+              startTimer();
+
+              toast.success("Otp sent successfully!");
+            })
+            .catch((error) => {
+              if (errorControler) {
                 toast.success("Otp sent successfully!");
-              })
-              .catch((error) => {
-                console.log(error);
+              } else {
                 generateError("Authentication failed try again");
-              });
-            setLoading(false);
-          }
-        });
+                setErrorControler(false);
+              }
+            });
+          setLoading(false);
+        }
+      });
     }
   }
 
+  function resendOtp() {
+    setErrorControler(false);
+    setLoading(true);
+
+    if (!phone) {
+      setLoading(false);
+      generateError("Enter a valid Mobile number");
+      return;
+    }
+
+    if (phone.trim() === "") {
+      setLoading(false);
+      generateError("Field should not be empty");
+      return;
+    } else if (phone.length !== 13) {
+      window.confirmationResult = null;
+      window.recaptchaVerifier = null;
+      setLoading(false);
+      generateError("Invalid Mobile number");
+      return;
+    } else {
+      setResendNumber(phone?.slice(3));
+
+      axios.get(`${baseUrl}/auth/otplogin/${phone.slice(3)}`).then((res) => {
+        if (!res.data.user) {
+          setLoading(false);
+          generateError("Mobile number not registered");
+          return;
+        } else {
+          setLoading(true);
+          onCaptchVerify();
+          const appVerifier = window.recaptchaVerifier;
+
+          // Reset reCAPTCHA widget
+       
+          if (window.recaptchaWidgetId) {
+            window.grecaptcha.reset(window.recaptchaWidgetId);
+          }
+
+          const formatPh = "+" + phone;
+          signInWithPhoneNumber(auth, formatPh, appVerifier)
+            .then((confirmationResult) => {
+              setErrorControler(true);
+              window.confirmationResult = confirmationResult;
+              setLoading(false);
+              setShowOtp(true);
+              startTimer();
+
+              toast.success("Otp sent successfully!");
+            })
+            .catch((error) => {
+              console.log(error);
+              if (errorControler) {
+                toast.success("Otp sent successfully!");
+              } else {
+                generateError("Authentication failed. Try again.");
+                setErrorControler(false);
+              }
+            });
+          setLoading(false);
+        }
+      });
+    }
+  }
+
+  const manageinvalidOtp = () => {
+    setInvalid(true);
+
+    setTimeout(() => {
+      setInvalid(false);
+    }, 2000);
+  };
+
   function onOTPVerify() {
-    console.log("-------1----------");
+    manageinvalidOtp();
+
     setLoading(true);
     window.confimationResult
       .confirm(otp)
       .then(async (res) => {
-        console.log("then");
-        console.log(res);
+      
         setUser(res.user);
         setLoading(false);
-        axios
-          .get(`${baseUrl}/auth/otpverify/${phone.slice(3)}`)
-          .then((res) => {
-            console.log(res);
-            console.log("-------2----------");
+        axios.get(`${baseUrl}/auth/otpverify/${phone.slice(3)}`).then((res) => {
+          const token = res.data.token;
+          document.cookie = `jwt=${token}`;
 
-            localStorage.setItem("userId", JSON.stringify(res.data.user._id));
-            console.log("-------3----------");
-            const userId = JSON.parse(localStorage.getItem("userId"));
-            console.log(userId);
-          
-            navigate("/userlogin");
-          });
+          localStorage.setItem("userId", JSON.stringify(res.data.user._id));
+
+          navigate("/userlogin");
+        });
       })
       .catch((error) => {
-        console.log(error);
-        console.log("catcherrorerror");
+    
         setLoading(false);
-        callInvalidotptost()
+        callInvalidotptost();
       });
   }
 
@@ -168,35 +255,45 @@ function UserOtpLogin() {
             id="login"
             className="p-4 flex flex-col  justify-center min-h-screen max-w-md mx-auto"
           >
-             
+            <div></div>
 
-<div> 
+            {showOtp ? (
+              <div className="bg-gradient-to-tr to-fuchsia-500 from-sky-300 w-full h-full  rounded-lg border-4	border-pink-600">
+                <div
+                  onClick={() => {
+                    setShowOtp(false);
+                    setOtp("");
+                    setPhone("");
+                    setLoading(false);
+                    setShowOtp(false);
+                    setUser(null);
+                    setResend(true);
+                    setResendNumber(null);
+                  }}
+                >
+                  back
+                </div>
+                <div className="">
+                  <div className="mt-16   flex flex-col  gap-6 justify-center  ">
+                    {reSend && (
+                      <button
+                        className=""
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          resendOtp();
+                        }}
+                      >
+                        Resend Otp
+                      </button>
+                    )}
 
-</div>
-
-
-          {
-            showOtp
-             ?
-
-             (
-             <div className="bg-gradient-to-tr to-fuchsia-500 from-sky-300 w-full h-full  rounded-lg border-4	border-pink-600"> 
-
-              <div className="">
-                <div className="mt-16   flex flex-col  gap-6 justify-center  ">
-
-
-
-
-                {reSend &&
-                    <button  className="" onClick={()=>{onsignup()}}>
+                    {/* {reSend &&
+                    <button  className="" onClick={()=>{resendCaller()}}>
                       Resend Otp
                     </button>
-                } 
+                }  */}
 
-
-
-                {/* {reSend ? (
+                    {/* {reSend ? (
                     <button  className="" onClick={()=>{onsignup()}}>
                       Resend Otp
                     </button>
@@ -205,72 +302,37 @@ function UserOtpLogin() {
                     <div className="rounded-full bg-white"> {timer}</div>
                   )}  */}
 
-                <div className="flex-justify-center ml-10">
-                  <OtpInput
-                    OTPLength={6}
-                    value={otp}
-                    onChange={setOtp}
-                    otpType="number"
-                    disabled={false}
-                    autoFocus
-                    className=" test-red-300  ml-5"
-                  ></OtpInput>
-                </div>
+                    <div className="flex-justify-center ml-10">
+                      <OtpInput
+                        OTPLength={6}
+                        value={otp}
+                        onChange={setOtp}
+                        otpType="number"
+                        disabled={false}
+                        autoFocus
+                        className=" test-red-300  ml-5"
+                      ></OtpInput>
+                    </div>
+                  </div>
+                  <div className="w-full flex justify-center mt-6">
+                    <button
+                      onClick={onOTPVerify}
+                      style={{ backgroundColor: "white" }}
+                      className="flex justify-center items-center gap-3 w-1/2 h-10 bg-white	font-bold	 text-red-500 rounded-md"
+                    >
+                      {loading && <CgSpinner className="animate-spin" />}
+                      <span className="text-blue-500">Verify Otp</span>
+                    </button>
+                  </div>
+                  {invalid && (
+                    <span className="w-full flex justify-center mt-3 text-red-600 text-sm font-medium">
+                      Invalid Otp
+                    </span>
+                  )}
 
-                </div>
-                <div className="w-full flex justify-center mt-6">
-                  <button
-                    onClick={onOTPVerify}
-                    style={{ backgroundColor: "white" }}
-                    className="flex justify-center items-center gap-3 w-1/2 h-10 bg-white	font-bold	 text-red-500 rounded-md"
-                  >
-                    {loading && <CgSpinner className="animate-spin" />}
-                    <span>Verify Otp</span>
-                  </button>
-
-                   
-
-
-                    
-
-                </div>
-
-
-
-
-                <div className=" rounded w-28 ml-40 h-6 my-2 justify-center items-center mt-10 ">
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                  <div className=" rounded w-28 ml-40 h-6 my-2 justify-center items-center mt-10 "></div>
                 </div>
               </div>
-
-              </div>
-
-
-
-
-
             ) : (
               <div>
                 <div className="p-6 bg-sky-50 rounded">
@@ -306,14 +368,15 @@ function UserOtpLogin() {
                     </button>
                   </div>
                   <div className="mt-6 text-grey-dark">
-                    <Link to={"/userlogin"}><span style={{color:"blue"}} >Login in Page</span></Link>
-                </div>
+                    <Link to={"/userlogin"}>
+                      <span style={{ color: "blue" }}>Login in Page</span>
+                    </Link>
+                  </div>
                   <ToastContainer />
                   <div id="reqcapcha"></div>
                 </div>
               </div>
-            )
-            }
+            )}
           </section>
         </div>
       )}

@@ -6,7 +6,6 @@ function ReportPost({setMore,setReportOpen,postId,postUser,setPost}) {
     const userId = JSON.parse(localStorage.getItem('userId'));
 
     const reporter=async(reason)=>{
-        console.log(reason);
 
       const res=  await axios.post(`${baseUrl}/admin/reportpost/`,{postId,userId,reason:reason,postUser})
         setMore(false)
@@ -14,9 +13,7 @@ function ReportPost({setMore,setReportOpen,postId,postUser,setPost}) {
         postCaller()
     }
     const postCaller =async () => {
-console.log("calling");
      await axios.get(`${baseUrl}/users/getposts/${userId}`).then((data) => {
-       console.log("postcaller1",data);
    
           setPost(data.data.posts )
         

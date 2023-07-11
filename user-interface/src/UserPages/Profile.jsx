@@ -110,15 +110,12 @@ const Profile = () => {
       .put(`${baseUrl}/users/updateprofile`, data)
       .then((res) => {
 
-        console.log("res.data:",res.data);
 
         if (res.data.update) {
           const { city, bio, school, username } = res.data;
         
           if (username) {
-            console.log(username);
             setProfileUserName(username);
-            console.log(setProfileUserName);
             
            setProfileCardName(username)
            
@@ -134,7 +131,6 @@ const Profile = () => {
            
           } 
           if (city) {
-            console.log("city",city);
             setPlace(city);
             setCurrentPlace(city);
           } else {
@@ -162,7 +158,6 @@ const Profile = () => {
 
     setIsOpen(false);
   };
-console.log("currentPlace",currentPlace);
   useEffect(() => {
     const getPost = async () => {
       try {

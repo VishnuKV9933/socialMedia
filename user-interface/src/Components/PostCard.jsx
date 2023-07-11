@@ -76,7 +76,6 @@ function PostCard({ post,
       });
       setPostUser(user.data)
     if(!user?.data?.profilePicture){
-      console.log("");
       
     }else{
       setProfileImage(user?.data?.profilePicture)
@@ -122,7 +121,6 @@ function PostCard({ post,
       const Obj=post
       Obj.likerId=userId
       axios.post(`${baseUrl}/notification/likepost`,Obj).then((data)=>{
-        console.log(data);
       })
   };
 
@@ -130,10 +128,8 @@ function PostCard({ post,
     try {
         axios.delete(`${baseUrl}/users/deletepost/${_id}`).then((data)=>{
          
-          console.log("delete",data.data);
      
     axios.get(`${baseUrl}/users/getposts/${userId}`).then((data) => {
-      console.log("yes");
     setPost(data.data.posts);
   })
   .catch((data)=>console.log(data))
@@ -153,7 +149,6 @@ function PostCard({ post,
     const likedUsers=async()=>{
       
       const res =await axios.get(`${baseUrl}/users/getlikedpeople/${post._id}`)
-      console.log("likedUser:",res);      
       setLikedUser(res.data)
     }
     likedUsers()
@@ -162,7 +157,6 @@ function PostCard({ post,
   const postCaller =async () => {
 
      axios.get(`${baseUrl}/users/getposts/${userId}`).then((data) => {
-      console.log("postcaller1",data);
   
          setPost(data.data.posts )
        
@@ -183,7 +177,7 @@ function PostCard({ post,
         
           }}
         open={reportOpen} >
-          <div className="w-40 h-fit">
+          <div className="w-40 h-fit ">
          <RepostPost setReportOpen={setReportOpen} setMore={ setMore} setPost={setPost} postUser={post.userName} postId={post._id}/>
 
           </div>
@@ -266,10 +260,10 @@ function PostCard({ post,
                   {postOptions?( <div className="rounded-md">
 
                     <div onClick={()=>{setEditOpen(true)}} id="moreClose" className="w-full p-1 flex justify-center 
-                    rounded-t-md drop-shadow-2xl content-center  border-2 cursor-default hover:bg-blue-200">Edit post</div>
+                text-blue-900    rounded-t-md drop-shadow-2xl content-center  border-2 cursor-default hover:bg-blue-200">Edit post</div>
 
                     <div onClick={()=>{setDeleteOpen(true)}} className="w-full p-1 flex justify-center drop-shadow-2xl content-center
-                     rounded-b-md border-2 cursor-default hover:bg-blue-200">Delete post</div>
+                 text-blue-900    rounded-b-md border-2 cursor-default hover:bg-blue-200">Delete post</div>
                     
                   </div>
                   ):
@@ -278,7 +272,7 @@ function PostCard({ post,
                     
                     }
                   className="w-full p-1 flex justify-center content-center drop-shadow-2xl overflow-visible 
-                   rounded-md border-2 cursor-default hover:bg-blue-200">Report post</div>}
+                  text-blue-900   rounded-md border-2 cursor-default hover:bg-blue-200">Report post</div>}
                 {/* </div> */}
                 
                 </div> 
@@ -292,8 +286,8 @@ function PostCard({ post,
                 />
               </div>
               <div className="">
-                <div onClick={() => navigate(`/peopleprofile/${post?.userId}`)} className="text-lg font-medium  transition-all">
-                  {postUser?.username}<span className="text-sm ml-4 text-gray-600">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
+                <div onClick={() => navigate(`/peopleprofile/${post?.userId}`)} className="text-lg font-medium text-blue-900  transition-all">
+                  {postUser?.username}<span className="text-sm ml-4 text-gray-600 text-blue-900">{post.updated?<>Updated a Post</>:<>Added a Post</>}</span></div>
                 <div className="text-sm text-gray-500">
                 <TimeAgo
   datetime={post?.updatedAt}
@@ -303,7 +297,7 @@ function PostCard({ post,
               </div>
             </div>
             {/* <div className="text-lg font-medium mt-4">Post Title</div> */}
-            <div  className="text-gray-600 mt-6 mb-4">{post.description}</div>
+            <div  className="text-gray-600 mt-6 mb-4 text-blue-900">{post.description}</div>
             {post.imageUrl && (
               <img src={post.imageUrl} alt="Post" className="w-full h-auto" />
               
@@ -343,8 +337,8 @@ function PostCard({ post,
                     </svg>
                   )}
                 </div>
-                <div className="cursor-default" onClick={()=>{setLikeOpen(true)}}
-                >{like} likes</div>
+                <div className="cursor-default text-blue-900 font-medium" onClick={()=>{setLikeOpen(true)}}
+                >{like} Likes</div>
               </div>
               <div className="flex items-center">
                 <div onClick={()=>{
@@ -356,14 +350,14 @@ function PostCard({ post,
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
-                    <path
+                    <path className="text-blue-900"
                       fillRule="evenodd"
                       d="M2 4h16a2 2 0 012 2v8a2 2 0 01-2 2H2a2 2 0 01-2-2V6a2 2 0 012-2zm2 2v6l4-3 4 3V6H4z"
                       clipRule="evenodd"
                     />
                   </svg>
                 </div>
-                <div>{commentLength} comments</div>
+                <div className="text-blue-900 font-medium">{commentLength} Comments</div>
               </div>
             </div>
           </div>

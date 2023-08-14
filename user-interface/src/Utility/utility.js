@@ -1,7 +1,7 @@
 import axios from 'axios';
 export const defaultProfilePicUrl="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png"
 
-export const baseUrl="http://localhost:4000/api"
+export const baseUrl="http://localhost:7000/api"
 
 // export const baseUrl="https://newworldnet.online/api"
 

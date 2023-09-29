@@ -13,7 +13,8 @@ function LayOut() {
   const { profilCardUrl, setProfileCardUrl } = useContext(
     ProfileCardUrlContext
   );
-  const userId = JSON.parse(localStorage.getItem("userId"));
+  // const userId = JSON.parse(localStorage.getItem("userId"));
+  const userId=localStorage.getItem("userId")
   const [suggestion, setSuggestion] = useState([]);
   const [user, setUser] = useState(null);
   const [suggestionDisplayController, setSuggestionDisplayController] =

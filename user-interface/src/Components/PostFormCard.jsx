@@ -28,7 +28,8 @@ function PostFormCard2({postAlert,
  
   useEffect(()=>{
  
-    const userId = JSON.parse(localStorage.getItem("userId"));
+    // const userId = JSON.parse(localStorage.getItem("userId"));
+    const userId =  localStorage.getItem("userId")
 
     socket.current=io('ws://localhost:8900')
 

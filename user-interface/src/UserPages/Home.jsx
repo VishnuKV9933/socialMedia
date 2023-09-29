@@ -16,8 +16,8 @@ function Home() {
   // const posts = useSelector((state) => state.posts);//redux
   const [posts, setPost] = useState([]);
   const navigate = useNavigate();
-  const userId = JSON.parse(localStorage.getItem("userId"));
- 
+  // const userId = JSON.parse(localStorage.getItem("userId"));
+  const userId = localStorage.getItem("userId")
 
   useEffect(() => {
     const getUser = async () => {

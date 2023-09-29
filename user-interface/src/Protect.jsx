@@ -8,17 +8,18 @@ function Protect() {
 const navigate=useNavigate()
 const [cookies,removeCookie] = useCookies();
 
-// const [validate,setValidate]=useState(null)
-const userId = JSON.parse(localStorage.getItem('userId'));
-// setValidate(true)
+
+ const userId =  localStorage.getItem("userId")
 useEffect(()=>{
   const getPostUser = async () => {
-
-  //   if(!userId){removeCookie("jwt");
-  //   localStorage.removeItem("userId"); 
-  //   navigate("/userLogin");
-  // }
-   
+console.log("-----------------1---------------------");
+    if(!userId || userId !== undefined){
+      removeCookie("jwt");
+    localStorage.removeItem("userId"); 
+    navigate("/userLogin");
+    console.log("-----------------2---------------------");
+  }
+  console.log(userId);
     const res = await axios.post(`${baseUrl}/users/getuser`, {
       userId:userId
     });
@@ -31,45 +32,6 @@ useEffect(()=>{
   getPostUser()
 },[userId])
 
-// useEffect(()=>{
-
-//   const verifyUser = async () => {
-
-//     if (!cookies.jwt) {
-
-//       navigate("/userLogin");
-//     } else {
-
-
-//       const { data } = await axios.post(
-//         `${baseUrl}/auth`,
-//         {},
-//         {
-//           withCredentials: true,
-//         }
-//       );
-//       if (!data.status) {
-//         removeCookie("jwt");
-//         localStorage.removeItem("userId"); 
-//         navigate("/userLogin");
-      
-//       } else {
-       
-       
-       
-//        navigate("/")
-       
-//       }
-      
-//     }
-//   };
-  
-
-//   verifyUser();
-
-// },[])  
-   
-  // return (userId)? <Outlet /> : <Navigate to="/userlogin" />
   return  <Outlet /> 
 }
 

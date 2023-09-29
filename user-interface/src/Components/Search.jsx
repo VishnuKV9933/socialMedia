@@ -4,7 +4,8 @@ import Suggestion from './Suggestion';
 import { baseUrl } from '../Utility/utility';
 // import { useSelector } from "react-redux";
 function Search({searchPasser}) {
-    const userId = JSON.parse(localStorage.getItem("userId"));
+    // const userId = JSON.parse(localStorage.getItem("userId"));
+    const userId=localStorage.getItem("userId")
     const [searchData,setSeacrhData]=useState(null)
     const[user,setUser]=useState(null)
     const[message,setMessage]=useState('')

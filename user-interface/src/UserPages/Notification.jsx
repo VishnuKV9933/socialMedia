@@ -5,7 +5,8 @@ import NotificationCard from '../Components/NotificationCard';
 import { baseUrl } from '../Utility/utility';
 
 function Notification() {
-    const userId = JSON.parse(localStorage.getItem('userId'));
+   // const userId = JSON.parse(localStorage.getItem("userId"));
+   const userId = localStorage.getItem("userId");
 
     const [notification,setNotification] = useState([])
     

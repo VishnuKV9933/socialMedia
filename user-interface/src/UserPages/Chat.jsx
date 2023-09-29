@@ -17,7 +17,8 @@ function Chat() {
 
     const {currentChat,setCurrentChat} =useContext(ChatContext)
     const navigate=useNavigate()
-    const userId = JSON.parse(localStorage.getItem("userId"));
+    // const userId = JSON.parse(localStorage.getItem("userId"));
+  const userId = localStorage.getItem("userId");
     const scrollRef=useRef() 
 
     const [user,setUser]=useState(null)

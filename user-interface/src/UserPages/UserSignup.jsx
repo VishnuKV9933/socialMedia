@@ -6,7 +6,6 @@ import axios from "axios";
 import { baseUrl } from "../Utility/utility";
 
 export default function UserSignup() {
-
   const navigate = useNavigate();
 
   const generateError = (err) => {
@@ -47,10 +46,8 @@ export default function UserSignup() {
 
             const verifyUser = async () => {
               if (!token) {
-                console.log("notoken");
                 navigate("/userLogin");
               } else {
-                console.log("token",token);
                 const { data } = await axios.post(
                   `${baseUrl}/auth`,
                   {},
@@ -59,15 +56,9 @@ export default function UserSignup() {
                   }
                 );
 
-                // if (!data.status) {
-                //   removeCookie("jwt");
-                //   navigate("/userLogin");
-                // } else {
-                  localStorage.setItem("userId", JSON.stringify(data.user._id));
+                localStorage.setItem("userId", data.user._id);
 
-                  navigate("/");
-                  console.log("/");
-                // }
+                navigate("/");
               }
             };
 
@@ -80,10 +71,9 @@ export default function UserSignup() {
     }
   };
   const styles = {
-    fontFamily: 'Georgia, serif',
+    fontFamily: "Georgia, serif",
 
-      color: '#065666', // Replace with the actual hex code of bg-blue-800
-    
+    color: "#065666", // Replace with the actual hex code of bg-blue-800
   };
   return (
     <div className="App">
@@ -94,7 +84,9 @@ export default function UserSignup() {
         >
           <div class="p-6 bg-sky-50 rounded">
             <div class="flex items-center justify-center font-black m-3 mb-12">
-              <h1 style={styles} class="tracking-wide text-3xl text-gray-900">NEW WORLD</h1>
+              <h1 style={styles} class="tracking-wide text-3xl text-gray-900">
+                NEW WORLD
+              </h1>
             </div>
 
             <form
@@ -150,7 +142,9 @@ export default function UserSignup() {
                 <p style={{ color: "red" }}>Email is not valid.</p>
               )}
 
-              <label class="text-sm font-medium text-sky-900">Mobile Number</label>
+              <label class="text-sm font-medium text-sky-900">
+                Mobile Number
+              </label>
               <input
                 class="mb-3 px-2 py-1.5
           mb-3 mt-1 block w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
@@ -251,7 +245,7 @@ export default function UserSignup() {
                 type="submit"
               >
                 <span id="login_default_state">
-                 Register<span id="subtotal"></span>
+                  Register<span id="subtotal"></span>
                 </span>
               </button>
             </form>

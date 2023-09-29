@@ -17,7 +17,8 @@ function CommendModal({
   setCommentLenght
 }) {
   const MAX_HEIGHT = 100;
-  const userId = JSON.parse(localStorage.getItem("userId"));
+   // const userId = JSON.parse(localStorage.getItem("userId"));
+   const userId = localStorage.getItem("userId");
 
   const OVERLAY_STYLE={
     top:5,

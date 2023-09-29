@@ -9,7 +9,9 @@ import { baseUrl } from '../Utility/utility';
 function Suggestion({suggestion,user,suggestionFunction}) {
 
 
-  const userId = JSON.parse(localStorage.getItem("userId"));
+  // const userId = JSON.parse(localStorage.getItem("userId"));
+  const userId = localStorage.getItem("userId");
+
 
   const [followState,setFollowState]=useState(user?.following?.includes(suggestion._id))
 

@@ -12,7 +12,9 @@ const UserLogin = () => {
 
   const navigate = useNavigate();
 
-  const userId = JSON.parse(localStorage.getItem("userId"));
+  // const userId = JSON.parse(localStorage.getItem("userId"));
+  const userId = localStorage.getItem("userId");
+
 
   useEffect(() => {
     if (!userId) {
@@ -46,7 +48,6 @@ const UserLogin = () => {
       );
 
       if (data) {
-        console.log(data, "success");
         if (data.errors) {
           console.log(data.errors);
           const { email, password, block } = data.errors;
@@ -84,7 +85,10 @@ const UserLogin = () => {
                 navigate("/userLogin");
               } else {
 
-                localStorage.setItem("userId", JSON.stringify(data.user._id));
+                // localStorage.setItem("userId", JSON.stringify(data.user._id));
+                localStorage.setItem("userId", data.user._id);
+
+
                 navigate("/");
               }
             }

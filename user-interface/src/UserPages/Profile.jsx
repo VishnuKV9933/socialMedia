@@ -43,7 +43,8 @@ const Profile = () => {
 
   const  [followersOpen,setFollowersOpen]=useState(false) 
 
-  const userId = JSON.parse(localStorage.getItem("userId"));
+   // const userId = JSON.parse(localStorage.getItem("userId"));
+   const userId = localStorage.getItem("userId");
 
   
 
@@ -54,7 +55,8 @@ const Profile = () => {
       navigate("/");
     }
     const getUser = async () => {
-      const userId = JSON.parse(localStorage.getItem("userId"));
+       // const userId = JSON.parse(localStorage.getItem("userId"));
+  const userId = localStorage.getItem("userId");
       if (!userId) {
         navigate("/");
       }

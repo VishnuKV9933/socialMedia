@@ -10,17 +10,17 @@ import userService from "../ServiceLayer/userSevice";
 
 function Home() {
   const [user, setUser] = useState(null);
-  // dispatch to set state
   const dispatch = useDispatch();
-  // to get state
-  // const posts = useSelector((state) => state.posts);//redux
   const [posts, setPost] = useState([]);
   const navigate = useNavigate();
   // const userId = JSON.parse(localStorage.getItem("userId"));
   const userId = localStorage.getItem("userId")
 
+  console.log(userId,'fdsfsdfd,hoem');
+
   useEffect(() => {
     const getUser = async () => {
+      console.log(userId,'tttttthome');
       const user = await userService.getUser(userId);
 
       dispatch(setUser({ user: user.data }));
@@ -36,33 +36,13 @@ function Home() {
       setPost(data.posts);
     };
     posts();
-    // axiosInstance
-    //   .get(
-    //     `/users/getposts/${userId}`
-    //     // {cancelToken: source1.token}
-    //   )
-    //   .then((data) => {
-    //     // redux
-    //     // impoerting from store and adding to state
-    //     // dispatch(
-    //     //   setPosts({
-    //     //     posts: data.data.posts,
-    //     //   })
-    //     // );
-    //     setPost(data.data.posts);
-    //   });
+  
   }, []);
 
   const postAlert = async () => {
     const data = await userService.getPosts(userId);
     setPost(data.posts);
-      // impoerting from store and adding to state
-      // redux
-      // dispatch(
-      //   setPosts({
-      //     posts: data.data.posts,
-      //   })
-      // );
+
       setPost(data.posts);
    
   };

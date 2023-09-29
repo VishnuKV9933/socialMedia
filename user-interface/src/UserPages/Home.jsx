@@ -7,6 +7,7 @@ import "../Icons/input.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../redux/store";
 import userService from "../ServiceLayer/userSevice";
+import { welcomeImage } from "../Utility/utility";
 
 function Home() {
   const [user, setUser] = useState(null);
@@ -53,6 +54,9 @@ function Home() {
         <PostFormCard posts={posts} setPost={setPost} postAlert={postAlert} />
       </div>
 
+      {
+        posts.length ?
+
       <div className=" ">
         {posts?.map((post) => {
           return (
@@ -66,6 +70,16 @@ function Home() {
           );
         })}
       </div>
+      :
+
+      <div className="w-full h-fit ">
+        <img className="w-full h-fit" src={welcomeImage} alt="" />
+      </div>
+      }
+
+
+
+
     </div>
   );
 }

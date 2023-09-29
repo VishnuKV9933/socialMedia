@@ -10,7 +10,7 @@ export const axiosInstance = axios.create({
   timeout: 10000,
 });
 
-
+export const welcomeImage="https://metaco.co.za/blog/wp-content/uploads/2020/01/Annotation-2020-01-09-162050.png"
 
 export const fileSelector= function (setfile,setProfilePicturePreviewUrl){
 
